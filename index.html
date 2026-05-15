@@ -115,6 +115,32 @@
   .btn-print:hover { background: var(--accent-deep); }
   .btn-print svg { display: block; }
 
+  /* ---- Auto-save indicator ---- */
+  .save-indicator {
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'Spline Sans Mono', monospace; font-size: 12px;
+    color: var(--good); font-weight: 600; padding-bottom: 9px;
+    opacity: 0; transform: translateY(-2px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none; white-space: nowrap;
+  }
+  .save-indicator.is-visible { opacity: 1; transform: translateY(0); }
+  .save-indicator.is-saving { color: var(--ink-faint); }
+  .save-indicator.is-saving .save-check { display: none; }
+  .save-check { flex-shrink: 0; }
+
+  /* ---- Cross-item note (e.g. "5 ingredients carried over from other items") ---- */
+  .cross-item-note {
+    display: none; align-items: center; gap: 9px;
+    background: var(--good-bg); border: 1px solid #c2dcc0;
+    border-left: 3px solid var(--good);
+    border-radius: var(--radius-sm); padding: 9px 14px;
+    font-size: 12.5px; color: #2c5e2c; margin-bottom: 13px;
+  }
+  .cross-item-note.is-visible { display: flex; }
+  .cross-item-note svg { color: var(--good); flex-shrink: 0; }
+  .cross-item-note strong { font-weight: 700; }
+
   .legend {
     display: flex; gap: 22px; font-size: 12px; color: var(--ink-soft);
     margin-bottom: 13px; padding-left: 2px; flex-wrap: wrap;
@@ -576,7 +602,15 @@
       </svg>
       Print / Save PDF
     </button>
+    <div class="save-indicator" id="saveIndicator" role="status" aria-live="polite">
+      <svg class="save-check" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="save-text" id="saveText">Saved</span>
+    </div>
   </div>
+
+  <div class="cross-item-note" id="crossItemNote"></div>
 
   <div class="legend">
     <span><span class="swatch locked"></span> From corporate master data — locked</span>
@@ -746,62 +780,193 @@
 
 <script>
   // ---- Sample master data (in production: pulled from PimCore recipes) ----
-  const PURCHASE_UNITS = ["Case", "Box", "Bag", "Jar", "Bottle", "Can", "Tub", "Pack", "Each"];
+  const PURCHASE_UNITS = ["Case", "Box", "Bag", "Jar", "Bottle", "Can", "Tub", "Pack", "Dozen", "Each"];
 
   const MENU_ITEMS = [
     {
       name: "The Famous Star with Cheese",
-      sku: "10042",
-      price: 6.99,
+      sku: "2122",
+      price: null,
       ingredients: [
-        { name: "Beef patty",      portionUnit: "each",  noun: "patties", portionQty: 1,   pUnit: "Case", cost: 89.00, portions: 120 },
-        { name: "American cheese", portionUnit: "slice", noun: "slices",  portionQty: 2,   pUnit: "Case", cost: 44.00, portions: 200 },
-        { name: "Seeded bun",      portionUnit: "each",  noun: "buns",    portionQty: 1,   pUnit: "Case", cost: 28.00, portions: 120 },
-        { name: "Lettuce",         portionUnit: "leaf",  noun: "leaves",  portionQty: 1,   pUnit: "Case", cost: 34.00, portions: 300 },
-        { name: "Tomato",          portionUnit: "slice", noun: "slices",  portionQty: 2,   pUnit: "Case", cost: 38.00, portions: 400 },
-        { name: "Red onion",       portionUnit: "ring",  noun: "rings",   portionQty: 3,   pUnit: "Bag",  cost: 16.00, portions: 320 },
-        { name: "Dill pickle",     portionUnit: "slice", noun: "slices",  portionQty: 4,   pUnit: "Jar",  cost: 13.00, portions: 360 },
-        { name: "Special sauce",   portionUnit: "oz",    noun: "ounces",  portionQty: 1,   pUnit: "Jar",  cost: 9.00,  portions: 80  },
-        { name: "Mayonnaise",      portionUnit: "oz",    noun: "ounces",  portionQty: 0.5, pUnit: "Jar",  cost: 6.50,  portions: 130 }
+        { name: "Beef 3.5oz patty",          portionUnit: "each",  noun: "patties", portionQty: 1,    pUnit: "Case", cost: null, portions: 133 },
+        { name: "Bun 4.5\" seeded",          portionUnit: "each",  noun: "buns",    portionQty: 1,    pUnit: "Pack", cost: null, portions: 8   },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 670 },
+        { name: "Onion yellow/white",        portionUnit: "oz",    noun: "ounces",  portionQty: 0.65, pUnit: "Case", cost: null, portions: 800 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 434 },
+        { name: "Mayo bulk",                 portionUnit: "oz",    noun: "ounces",  portionQty: 0.68, pUnit: "Case", cost: null, portions: 541 },
+        { name: "Pickle tub dill",           portionUnit: "each",  noun: "pickles", portionQty: 3,    pUnit: "Case", cost: null, portions: 3200},
+        { name: "Cheese American",           portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 264 },
+        { name: "Wrap famous/big 4-way",     portionUnit: "each",  noun: "wraps",   portionQty: 1,    pUnit: "Case", cost: null, portions: 5000},
+        { name: "Quik wrp prt 12.5x12.5",    portionUnit: "each",  noun: "sheets",  portionQty: 1,    pUnit: "Case", cost: null, portions: 5000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,    pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25, pUnit: "Case", cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,  pUnit: "Case", cost: null, portions: 2000},
+        { name: "Sauce special",             portionUnit: "oz",    noun: "ounces",  portionQty: 0.63, pUnit: "Case", cost: null, portions: 384 }
       ]
     },
     {
-      name: "Classic Cheeseburger",
-      sku: "10018",
-      price: 4.49,
+      name: "Super Star with Cheese",
+      sku: "2305",
+      price: null,
       ingredients: [
-        { name: "Beef patty",      portionUnit: "each",  noun: "patties", portionQty: 1, pUnit: "Case", cost: 89.00, portions: 120 },
-        { name: "American cheese", portionUnit: "slice", noun: "slices",  portionQty: 1, pUnit: "Case", cost: 44.00, portions: 200 },
-        { name: "Plain bun",       portionUnit: "each",  noun: "buns",    portionQty: 1, pUnit: "Case", cost: 24.00, portions: 120 },
-        { name: "Dill pickle",     portionUnit: "slice", noun: "slices",  portionQty: 3, pUnit: "Jar",  cost: 13.00, portions: 360 },
-        { name: "Ketchup",         portionUnit: "oz",    noun: "ounces",  portionQty: 0.5, pUnit: "Jar", cost: 7.50,  portions: 140 },
-        { name: "Mustard",         portionUnit: "oz",    noun: "ounces",  portionQty: 0.25, pUnit: "Jar", cost: 6.00, portions: 150 }
+        { name: "Beef 3.5oz patty",          portionUnit: "each",  noun: "patties", portionQty: 2,    pUnit: "Case", cost: null, portions: 133 },
+        { name: "Bun 4.5\" seeded",          portionUnit: "each",  noun: "buns",    portionQty: 1,    pUnit: "Pack", cost: null, portions: 8   },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 670 },
+        { name: "Onion yellow/white",        portionUnit: "oz",    noun: "ounces",  portionQty: 0.5,  pUnit: "Case", cost: null, portions: 800 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case", cost: null, portions: 434 },
+        { name: "Mayo bulk",                 portionUnit: "oz",    noun: "ounces",  portionQty: 0.68, pUnit: "Case", cost: null, portions: 541 },
+        { name: "Pickle tub dill",           portionUnit: "each",  noun: "pickles", portionQty: 3,    pUnit: "Case", cost: null, portions: 3200},
+        { name: "Cheese American",           portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case", cost: null, portions: 264 },
+        { name: "Wrap western/super 4-way",  portionUnit: "each",  noun: "wraps",   portionQty: 1,    pUnit: "Case", cost: null, portions: 4000},
+        { name: "Quik wrp prt 12.5x12.5",    portionUnit: "each",  noun: "sheets",  portionQty: 1,    pUnit: "Case", cost: null, portions: 5000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 3,    pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag 12# kraft star",        portionUnit: "each",  noun: "bags",    portionQty: 0.25, pUnit: "Case", cost: null, portions: 500 },
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,  pUnit: "Case", cost: null, portions: 2000},
+        { name: "Sauce special",             portionUnit: "oz",    noun: "ounces",  portionQty: 0.63, pUnit: "Case", cost: null, portions: 384 }
       ]
     },
     {
-      name: "Crispy Chicken Sandwich",
-      sku: "10071",
-      price: 5.79,
+      name: "Western Bacon Cheeseburger",
+      sku: "6053",
+      price: null,
       ingredients: [
-        { name: "Breaded chicken fillet", portionUnit: "each",  noun: "fillets", portionQty: 1, pUnit: "Case", cost: 102.00, portions: 80 },
-        { name: "Brioche bun",            portionUnit: "each",  noun: "buns",    portionQty: 1, pUnit: "Case", cost: 32.00,  portions: 96 },
-        { name: "Lettuce",                portionUnit: "leaf",  noun: "leaves",  portionQty: 2, pUnit: "Case", cost: 34.00,  portions: 300 },
-        { name: "Tomato",                 portionUnit: "slice", noun: "slices",  portionQty: 2, pUnit: "Case", cost: 38.00,  portions: 400 },
-        { name: "Dill pickle",            portionUnit: "slice", noun: "slices",  portionQty: 3, pUnit: "Jar",  cost: 13.00,  portions: 360 },
-        { name: "Mayonnaise",             portionUnit: "oz",    noun: "ounces",  portionQty: 0.75, pUnit: "Jar", cost: 6.50, portions: 130 }
+        { name: "Beef 3.5oz patty",          portionUnit: "each",  noun: "patties", portionQty: 1,    pUnit: "Case", cost: null, portions: 133 },
+        { name: "Bacon precooked",           portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case", cost: null, portions: 300 },
+        { name: "Cheese American",           portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 264 },
+        { name: "Bun 4.5\" seeded",          portionUnit: "each",  noun: "buns",    portionQty: 1,    pUnit: "Pack", cost: null, portions: 8   },
+        { name: "Onion rings",               portionUnit: "oz",    noun: "ounces",  portionQty: 1.32, pUnit: "Case", cost: null, portions: 192 },
+        { name: "Shortening",                portionUnit: "oz",    noun: "ounces",  portionQty: 0.41, pUnit: "Case", cost: null, portions: 575 },
+        { name: "Wrap western/super 4-way",  portionUnit: "each",  noun: "wraps",   portionQty: 1,    pUnit: "Case", cost: null, portions: 4000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,    pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25, pUnit: "Case", cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,  pUnit: "Case", cost: null, portions: 2000},
+        { name: "Sauce BBQ",                 portionUnit: "oz",    noun: "ounces",  portionQty: 1.02, pUnit: "Case", cost: null, portions: 384 }
       ]
     },
     {
-      name: "Garden Side Salad",
-      sku: "10090",
-      price: 3.29,
+      name: "Smokey Chipotle Burger",
+      sku: null,
+      price: null,
       ingredients: [
-        { name: "Mixed greens",    portionUnit: "oz",    noun: "ounces",   portionQty: 3,   pUnit: "Case", cost: 41.00, portions: 320 },
-        { name: "Cherry tomato",   portionUnit: "each",  noun: "tomatoes", portionQty: 4,   pUnit: "Case", cost: 36.00, portions: 600 },
-        { name: "Cucumber",        portionUnit: "slice", noun: "slices",   portionQty: 5,   pUnit: "Case", cost: 22.00, portions: 480 },
-        { name: "Shredded carrot", portionUnit: "oz",    noun: "ounces",   portionQty: 1,   pUnit: "Bag",  cost: 14.00, portions: 160 },
-        { name: "Crouton",         portionUnit: "oz",    noun: "ounces",   portionQty: 0.5, pUnit: "Bag",  cost: 11.00, portions: 90  },
-        { name: "Ranch dressing",  portionUnit: "oz",    noun: "ounces",   portionQty: 2,   pUnit: "Jar",  cost: 12.00, portions: 128 }
+        { name: "Beef 3.5oz patty",          portionUnit: "each",  noun: "patties", portionQty: 1,    pUnit: "Case", cost: null, portions: 133 },
+        { name: "Bun 4.5\" seeded",          portionUnit: "each",  noun: "buns",    portionQty: 1,    pUnit: "Pack", cost: null, portions: 8   },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case", cost: null, portions: 670 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 434 },
+        { name: "Sauce chipotle",            portionUnit: "oz",    noun: "ounces",  portionQty: 1,    pUnit: "Case", cost: null, portions: null },
+        { name: "Cheese Swiss",              portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case", cost: null, portions: 256 },
+        { name: "Bacon precooked",           portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case", cost: null, portions: 300 },
+        { name: "Wrap famous/big 4-way",     portionUnit: "each",  noun: "wraps",   portionQty: 1,    pUnit: "Case", cost: null, portions: 5000},
+        { name: "Quik wrp prt 12.5x12.5",    portionUnit: "each",  noun: "sheets",  portionQty: 1,    pUnit: "Case", cost: null, portions: 5000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,    pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25, pUnit: "Case", cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,  pUnit: "Case", cost: null, portions: 2000}
+      ]
+    },
+    {
+      name: "Chargrilled Chicken Club",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Chicken filet",             portionUnit: "each",  noun: "filets",  portionQty: 1,    pUnit: "Case",  cost: null, portions: 110 },
+        { name: "Bacon precooked",           portionUnit: "slice", noun: "slices",  portionQty: 2,    pUnit: "Case",  cost: null, portions: 300 },
+        { name: "Cheese Swiss",              portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case",  cost: null, portions: 256 },
+        { name: "Premium bun",               portionUnit: "each",  noun: "buns",    portionQty: 1,    pUnit: "Dozen", cost: null, portions: 20  },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case",  cost: null, portions: 670 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 1,    pUnit: "Case",  cost: null, portions: 434 },
+        { name: "Mayonnaise",                portionUnit: "oz",    noun: "ounces",  portionQty: 0.5,  pUnit: "Case",  cost: null, portions: 541 },
+        { name: "Wrap chicken 4-way new",    portionUnit: "each",  noun: "wraps",   portionQty: 1,    pUnit: "Case",  cost: null, portions: 5000},
+        { name: "Quik wrp prt 12.5x12.5",    portionUnit: "each",  noun: "sheets",  portionQty: 1,    pUnit: "Case",  cost: null, portions: 5000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,    pUnit: "Case",  cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25, pUnit: "Case",  cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,  pUnit: "Case",  cost: null, portions: 2000}
+      ]
+    },
+    {
+      name: "Hand-Breaded Chicken Sandwich",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Chicken filet",             portionUnit: "each",  noun: "filets",  portionQty: 1,     pUnit: "Case",  cost: null, portions: 110 },
+        { name: "Breader chicken",           portionUnit: "oz",    noun: "ounces",  portionQty: 0.852, pUnit: "Case",  cost: null, portions: 400 },
+        { name: "Premium bun",               portionUnit: "each",  noun: "buns",    portionQty: 1,     pUnit: "Dozen", cost: null, portions: 20  },
+        { name: "Shortening",                portionUnit: "oz",    noun: "ounces",  portionQty: 1.55,  pUnit: "Case",  cost: null, portions: 575 },
+        { name: "Buttermilk",                portionUnit: "oz",    noun: "ounces",  portionQty: 2,     pUnit: "Case",  cost: null, portions: 512 },
+        { name: "Egg liquid",                portionUnit: "oz",    noun: "ounces",  portionQty: 0.08,  pUnit: "Case",  cost: null, portions: 423 },
+        { name: "Mayonnaise",                portionUnit: "oz",    noun: "ounces",  portionQty: 0.5,   pUnit: "Case",  cost: null, portions: 256 },
+        { name: "Pickle tub dill",           portionUnit: "each",  noun: "pickles", portionQty: 3,     pUnit: "Case",  cost: null, portions: 3200},
+        { name: "Wrap chicken 4-way new",    portionUnit: "each",  noun: "wraps",   portionQty: 1,     pUnit: "Case",  cost: null, portions: 5000},
+        { name: "Quik wrp prt 12.5x12.5",    portionUnit: "each",  noun: "sheets",  portionQty: 1,     pUnit: "Case",  cost: null, portions: 5000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,     pUnit: "Case",  cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25,  pUnit: "Case",  cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,   pUnit: "Case",  cost: null, portions: 2000}
+      ]
+    },
+    {
+      name: "Natural Cut Poutine",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Fry shoestring skin on",    portionUnit: "oz",    noun: "ounces",  portionQty: 9.95,  pUnit: "Case", cost: null, portions: 576  },
+        { name: "Shortening",                portionUnit: "oz",    noun: "ounces",  portionQty: 1.62,  pUnit: "Case", cost: null, portions: 575  },
+        { name: "Cheese cheddar curds",      portionUnit: "each",  noun: "portions",portionQty: 1,     pUnit: "Case", cost: null, portions: 100  },
+        { name: "Salt bulk",                 portionUnit: "oz",    noun: "ounces",  portionQty: 0.85,  pUnit: "Case", cost: null, portions: 705  },
+        { name: "Poutine mix",               portionUnit: "oz",    noun: "ounces",  portionQty: 3,     pUnit: "Case", cost: null, portions: 1217 }
+      ]
+    },
+    {
+      name: "Waffle Fry Poutine",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Shortening",                portionUnit: "oz",    noun: "ounces",  portionQty: 1.62,  pUnit: "Case", cost: null, portions: 575  },
+        { name: "Cheese cheddar curds",      portionUnit: "each",  noun: "portions",portionQty: 1,     pUnit: "Case", cost: null, portions: 100  },
+        { name: "Salt bulk",                 portionUnit: "oz",    noun: "ounces",  portionQty: 0.85,  pUnit: "Case", cost: null, portions: 705  },
+        { name: "Poutine mix",               portionUnit: "oz",    noun: "ounces",  portionQty: 3,     pUnit: "Case", cost: null, portions: 1217 },
+        { name: "Criss cut fries",           portionUnit: "oz",    noun: "ounces",  portionQty: 11,    pUnit: "Case", cost: null, portions: 480  }
+      ]
+    },
+    {
+      name: "Grilled Chicken Salad",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Cheese jack/cheddar shredded",portionUnit: "oz",  noun: "ounces",  portionQty: 0.25,  pUnit: "Case", cost: null, portions: 353 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 3,     pUnit: "Case", cost: null, portions: 434 },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 3.527, pUnit: "Case", cost: null, portions: 670 },
+        { name: "Cucumber",                  portionUnit: "slice", noun: "slices",  portionQty: 1,     pUnit: "Case", cost: null, portions: 147 },
+        { name: "Dressing raspberry",        portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 120 },
+        { name: "Dressing caesar",           portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 120 },
+        { name: "Dressing balsamic",         portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 100 },
+        { name: "Croutons",                  portionUnit: "each",  noun: "packets", portionQty: 1,     pUnit: "Case", cost: null, portions: 250 },
+        { name: "Chicken filet",             portionUnit: "each",  noun: "filets",  portionQty: 1,     pUnit: "Case", cost: null, portions: 110 },
+        { name: "Bowl 32oz entree salad",    portionUnit: "each",  noun: "bowls",   portionQty: 1,     pUnit: "Case", cost: null, portions: 150 },
+        { name: "Lid 32oz entree salad",     portionUnit: "each",  noun: "lids",    portionQty: 1,     pUnit: "Case", cost: null, portions: 150 },
+        { name: "Fork black heavy med",      portionUnit: "each",  noun: "forks",   portionQty: 1,     pUnit: "Case", cost: null, portions: 1000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 3,     pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag t-shirt 1/8 bbl",       portionUnit: "each",  noun: "bags",    portionQty: 0.25,  pUnit: "Case", cost: null, portions: 1000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,   pUnit: "Case", cost: null, portions: 2000}
+      ]
+    },
+    {
+      name: "Garden Salad",
+      sku: null,
+      price: null,
+      ingredients: [
+        { name: "Cheese jack/cheddar shredded",portionUnit: "oz",  noun: "ounces",  portionQty: 0.25,  pUnit: "Case", cost: null, portions: 353 },
+        { name: "Tomato",                    portionUnit: "slice", noun: "slices",  portionQty: 1.5,   pUnit: "Case", cost: null, portions: 434 },
+        { name: "Lettuce",                   portionUnit: "slice", noun: "slices",  portionQty: 1.764, pUnit: "Case", cost: null, portions: 670 },
+        { name: "Cucumber",                  portionUnit: "slice", noun: "slices",  portionQty: 1,     pUnit: "Case", cost: null, portions: 147 },
+        { name: "Dressing raspberry",        portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 120 },
+        { name: "Dressing caesar",           portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 120 },
+        { name: "Dressing balsamic",         portionUnit: "each",  noun: "packets", portionQty: 0.67,  pUnit: "Case", cost: null, portions: 100 },
+        { name: "Croutons",                  portionUnit: "each",  noun: "packets", portionQty: 1,     pUnit: "Case", cost: null, portions: 250 },
+        { name: "Bowl black 16/20 oz",       portionUnit: "each",  noun: "bowls",   portionQty: 1,     pUnit: "Case", cost: null, portions: 500 },
+        { name: "Lid clr vntd 16/20 oz",     portionUnit: "each",  noun: "lids",    portionQty: 1,     pUnit: "Case", cost: null, portions: 500 },
+        { name: "Fork black heavy med",      portionUnit: "each",  noun: "forks",   portionQty: 1,     pUnit: "Case", cost: null, portions: 1000},
+        { name: "Napkin full fold jr",       portionUnit: "each",  noun: "napkins", portionQty: 2,     pUnit: "Case", cost: null, portions: 10800},
+        { name: "Bag 8 lb kraft star",       portionUnit: "each",  noun: "bags",    portionQty: 0.25,  pUnit: "Case", cost: null, portions: 2000},
+        { name: "Trayliner Carl's classic",  portionUnit: "each",  noun: "liners",  portionQty: 0.5,   pUnit: "Case", cost: null, portions: 2000},
+        { name: "Carrots",                   portionUnit: "oz",    noun: "ounces",  portionQty: 0.979, pUnit: "Case", cost: null, portions: null }
       ]
     }
   ];
@@ -818,6 +983,75 @@
     return qty + " " + (qty === 1 ? unitWord : noun);
   }
 
+  // ============================================================
+  // SAVED ENTRIES STORAGE
+  // Stores franchisee entries keyed by *ingredient name* (not menu
+  // item), so once "American cheese" is filled in for one item, it
+  // auto-populates everywhere else "American cheese" appears.
+  // Persists in localStorage so reloads keep the values.
+  // ============================================================
+  const STORAGE_KEY = "foodCostCalc.v1.ingredients";
+  const PRICE_STORAGE_KEY = "foodCostCalc.v1.prices"; // per-menu-item override prices
+
+  function loadSavedIngredients() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function persistSavedIngredients(map) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  function loadSavedPrices() {
+    try {
+      const raw = localStorage.getItem(PRICE_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function persistSavedPrices(map) {
+    try {
+      localStorage.setItem(PRICE_STORAGE_KEY, JSON.stringify(map));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Update the saved record for an ingredient with current entryState row
+  function saveIngredientEntry(ingName, entry) {
+    const map = loadSavedIngredients();
+    const existing = map[ingName] || {};
+    map[ingName] = {
+      pUnit: entry.pUnit != null ? entry.pUnit : existing.pUnit,
+      cost: entry.cost != null ? entry.cost : (existing.cost != null ? existing.cost : null),
+      portions: entry.portions != null ? entry.portions : (existing.portions != null ? existing.portions : null)
+    };
+    persistSavedIngredients(map);
+  }
+
+  // ---- Save indicator ----
+  let saveIndicatorTimer = null;
+  function showSaveIndicator() {
+    const ind = $("saveIndicator");
+    const txt = $("saveText");
+    ind.classList.remove("is-saving");
+    txt.textContent = "Saved";
+    ind.classList.add("is-visible");
+    if (saveIndicatorTimer) clearTimeout(saveIndicatorTimer);
+    saveIndicatorTimer = setTimeout(() => {
+      ind.classList.remove("is-visible");
+    }, 1800);
+  }
+
   function initMenu() {
     const sel = $("menuSelect");
     MENU_ITEMS.forEach((item, i) => {
@@ -832,13 +1066,60 @@
 
   function loadItem(index) {
     currentItem = MENU_ITEMS[index];
-    entryState = currentItem.ingredients.map(ing => ({
-      pUnit: ing.pUnit,   // purchase unit keeps a sensible default selection
-      cost: null,         // franchisee fills this in
-      portions: null      // franchisee fills this in
-    }));
-    $("menuMeta").textContent = "SKU " + currentItem.sku + " · " + currentItem.ingredients.length + " ingredients";
-    $("priceInput").value = currentItem.price.toFixed(2);
+    const saved = loadSavedIngredients();
+
+    // For each ingredient in this menu item, pre-fill from saved
+    // entries if they exist; otherwise leave as defaults / blank.
+    let carriedOverCount = 0;
+    entryState = currentItem.ingredients.map(ing => {
+      const sv = saved[ing.name];
+      if (sv && (sv.cost != null || sv.portions != null || sv.pUnit)) {
+        carriedOverCount++;
+        return {
+          pUnit: sv.pUnit || ing.pUnit,
+          cost: sv.cost != null ? sv.cost : null,
+          portions: sv.portions != null ? sv.portions : null
+        };
+      }
+      return { pUnit: ing.pUnit, cost: null, portions: null };
+    });
+
+    // Cross-item notification — only show when something carried over
+    // AND there's at least one row still to fill (otherwise it's noise)
+    const note = $("crossItemNote");
+    const stillNeeded = entryState.filter(s => s.cost == null || s.portions == null).length;
+    if (carriedOverCount > 0 && stillNeeded > 0) {
+      note.classList.add("is-visible");
+      note.innerHTML =
+        '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 10.5l4 4 10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<span><strong>' + carriedOverCount + ' ingredient' + (carriedOverCount === 1 ? '' : 's') + '</strong> ' +
+        (carriedOverCount === 1 ? 'was' : 'were') + ' filled in automatically from values you entered for another menu item. ' +
+        'You only need to enter the <strong>' + stillNeeded + ' remaining</strong> ' +
+        (stillNeeded === 1 ? 'ingredient' : 'ingredients') + '.</span>';
+    } else if (carriedOverCount > 0 && stillNeeded === 0) {
+      note.classList.add("is-visible");
+      note.innerHTML =
+        '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 10.5l4 4 10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<span>All <strong>' + carriedOverCount + ' ingredients</strong> were filled in automatically from your saved entries for other menu items.</span>';
+    } else {
+      note.classList.remove("is-visible");
+      note.innerHTML = "";
+    }
+
+    $("menuMeta").textContent = (currentItem.sku ? "SKU " + currentItem.sku + " · " : "") + currentItem.ingredients.length + " ingredients";
+
+    // Use saved menu-price override if present, otherwise the corporate default
+    // (which may be null for items without a fixed corporate price)
+    const savedPrices = loadSavedPrices();
+    const priceKey = currentItem.sku || currentItem.name;
+    let priceVal = null;
+    if (savedPrices[priceKey] != null) {
+      priceVal = savedPrices[priceKey];
+    } else if (currentItem.price != null) {
+      priceVal = currentItem.price;
+    }
+    $("priceInput").value = priceVal != null ? priceVal.toFixed(2) : "";
+
     renderRows();
     recalc();
   }
@@ -902,6 +1183,10 @@
       v = (trimmed === "") ? null : (parseFloat(trimmed) || 0);
     }
     entryState[i][f] = v;
+    // Persist this ingredient's entry across all menu items
+    const ingName = currentItem.ingredients[i].name;
+    saveIngredientEntry(ingName, entryState[i]);
+    showSaveIndicator();
     recalc();
   }
 
@@ -1043,7 +1328,7 @@
   // ---- Populate the print-only report ----
   function updateReport(computed, buildCost, price, margin, pct, bandCls, bandLabel, allComplete) {
     $("rptItem").textContent = currentItem.name;
-    $("rptSku").textContent = currentItem.sku;
+    $("rptSku").textContent = currentItem.sku || "—";
 
     const loc = $("locName").value.trim();
     const rptLoc = $("rptLoc");
@@ -1131,7 +1416,18 @@
   // default the date field to today
   $("locDate").value = today.toISOString().slice(0, 10);
 
-  $("priceInput").addEventListener("input", recalc);
+  $("priceInput").addEventListener("input", function () {
+    // Save the menu price keyed to the current item's SKU (or name if no SKU)
+    const v = parseFloat($("priceInput").value);
+    if (!isNaN(v) && v >= 0) {
+      const key = currentItem.sku || currentItem.name;
+      const prices = loadSavedPrices();
+      prices[key] = v;
+      persistSavedPrices(prices);
+      showSaveIndicator();
+    }
+    recalc();
+  });
   $("locName").addEventListener("input", recalc);
   $("locDate").addEventListener("change", recalc);
 
