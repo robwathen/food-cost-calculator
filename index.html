@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0062)file:///C:/Users/rwathen/Downloads/food-cost-calculator_4.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Franchisee Food Cost Calculator — Demo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./Franchisee Food Cost Calculator — Demo_files/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
     --ink: #1a1714;
@@ -181,6 +181,34 @@
     outline: none; border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(200,67,31,0.12);
   }
+
+  /* ---- Filled / complete states ---- */
+  input.num.is-filled {
+    border-color: var(--good);
+    background: #f5fbf3;
+  }
+  input.num.is-filled:focus {
+    border-color: var(--good);
+    box-shadow: 0 0 0 3px rgba(63,125,63,0.15);
+  }
+  .input-money.is-filled {
+    /* the wrapper around $ + input picks up subtle treatment too */
+  }
+  .input-money.is-filled .dollar { color: var(--good); }
+  .ing-row td.entry.entry-filled {
+    background: #f1f7ee;
+  }
+  .ing-row td.entry.entry-filled .caption { color: var(--good); }
+  /* small check indicator visible when row is fully complete */
+  .ext-val.ext-complete {
+    color: var(--good);
+  }
+  .ext-val.ext-complete::after {
+    content: " \2713";
+    color: var(--good);
+    font-weight: 700;
+  }
+
   .input-money { display: flex; align-items: center; gap: 3px; }
   .input-money .dollar {
     font-family: 'Spline Sans Mono', monospace; font-size: 13px;
@@ -515,36 +543,36 @@
 
   <div class="masthead">
     <div>
-      <div class="brand-line">Franchise Operations · Cost Tools</div>
+      <div class="brand-line">Franchise Operations &middot; Cost Tools</div>
       <h1 class="title">Theoretical Food Cost Calculator</h1>
       <p class="subtitle">Enter what <em>your</em> location pays for each ingredient. The recipe — every ingredient and its portion — comes from corporate master data and can't be changed. The calculator does the rest.</p>
     </div>
     <div class="masthead-tag">
-      PROTOTYPE v1.0<br>
-      <span id="stamp">May 14, 2026</span>
+      PROTOTYPE v1.0<br />
+      <span id="stamp"></span>
     </div>
   </div>
 
   <div class="controls">
     <div class="field-group">
       <label for="menuSelect">Menu Item</label>
-      <select id="menuSelect" class="menu-select"><option value="0">The Famous Star with Cheese</option><option value="1">Classic Cheeseburger</option><option value="2">Crispy Chicken Sandwich</option><option value="3">Garden Side Salad</option></select>
+      <select id="menuSelect" class="menu-select"></select>
     </div>
-    <div class="menu-meta" id="menuMeta">SKU 10042 · 9 ingredients</div>
+    <div class="menu-meta" id="menuMeta"></div>
     <div class="who-fields">
       <div class="field-group">
         <label for="locName">Franchisee / Location</label>
-        <input type="text" id="locName" placeholder="e.g. Eastgate Plaza #214">
+        <input type="text" id="locName" placeholder="e.g. Eastgate Plaza #214" />
       </div>
       <div class="field-group">
         <label for="locDate">Date</label>
-        <input type="date" id="locDate">
+        <input type="date" id="locDate" />
       </div>
     </div>
     <div class="controls-spacer"></div>
     <button class="btn-print" onclick="window.print()">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-        <path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 10h8v4H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+        <path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 10h8v4H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
       </svg>
       Print / Save PDF
     </button>
@@ -568,50 +596,50 @@
           <th class="ext-col">Extended Cost<span class="th-sub">in this item</span></th>
         </tr>
       </thead>
-      <tbody id="rows"><tr class="ing-row"><td class="ing-name">Beef patty</td><td class="locked"><span class="lock-val">each</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="0" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="0" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-0">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="0" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-0">usable <em>patties</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-0">—</span><span class="ext-sub" id="extSub-0">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-0">Enter the <strong>cost per case</strong> and the <strong>usable patties per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 each</strong> of beef patty.</div></td></tr><tr class="ing-row"><td class="ing-name">American cheese</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">2</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="1" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="1" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-1">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="1" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-1">usable <em>slices</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-1">—</span><span class="ext-sub" id="extSub-1">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-1">Enter the <strong>cost per case</strong> and the <strong>usable slices per case</strong> to calculate this ingredient's cost. The recipe uses <strong>2 slices</strong> of american cheese.</div></td></tr><tr class="ing-row"><td class="ing-name">Seeded bun</td><td class="locked"><span class="lock-val">each</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="2" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="2" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-2">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="2" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-2">usable <em>buns</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-2">—</span><span class="ext-sub" id="extSub-2">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-2">Enter the <strong>cost per case</strong> and the <strong>usable buns per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 each</strong> of seeded bun.</div></td></tr><tr class="ing-row"><td class="ing-name">Lettuce</td><td class="locked"><span class="lock-val">leaf</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="3" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="3" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-3">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="3" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-3">usable <em>leaves</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-3">—</span><span class="ext-sub" id="extSub-3">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-3">Enter the <strong>cost per case</strong> and the <strong>usable leaves per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 leaf</strong> of lettuce.</div></td></tr><tr class="ing-row"><td class="ing-name">Tomato</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">2</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="4" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="4" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-4">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="4" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-4">usable <em>slices</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-4">—</span><span class="ext-sub" id="extSub-4">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-4">Enter the <strong>cost per case</strong> and the <strong>usable slices per case</strong> to calculate this ingredient's cost. The recipe uses <strong>2 slices</strong> of tomato.</div></td></tr><tr class="ing-row"><td class="ing-name">Red onion</td><td class="locked"><span class="lock-val">ring</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">3</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="5" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag" selected="">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="5" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-5">cost per <em>bag</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="5" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-5">usable <em>rings</em> per <em>bag</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-5">—</span><span class="ext-sub" id="extSub-5">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-5">Enter the <strong>cost per bag</strong> and the <strong>usable rings per bag</strong> to calculate this ingredient's cost. The recipe uses <strong>3 rings</strong> of red onion.</div></td></tr><tr class="ing-row"><td class="ing-name">Dill pickle</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">4</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="6" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="6" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-6">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="6" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-6">usable <em>slices</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-6">—</span><span class="ext-sub" id="extSub-6">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-6">Enter the <strong>cost per jar</strong> and the <strong>usable slices per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>4 slices</strong> of dill pickle.</div></td></tr><tr class="ing-row"><td class="ing-name">Special sauce</td><td class="locked"><span class="lock-val">oz</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="7" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="7" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-7">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="7" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-7">usable <em>ounces</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-7">—</span><span class="ext-sub" id="extSub-7">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-7">Enter the <strong>cost per jar</strong> and the <strong>usable ounces per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>1 oz</strong> of special sauce.</div></td></tr><tr class="ing-row"><td class="ing-name">Mayonnaise</td><td class="locked"><span class="lock-val">oz</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">0.5</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="8" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="8" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-8">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="8" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-8">usable <em>ounces</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-8">—</span><span class="ext-sub" id="extSub-8">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-8">Enter the <strong>cost per jar</strong> and the <strong>usable ounces per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>0.5 oz</strong> of mayonnaise.</div></td></tr></tbody>
+      <tbody id="rows"></tbody>
       <tfoot>
         <tr>
           <td class="tf-label" colspan="6">Theoretical Build Cost</td>
-          <td class="tf-total" id="footTotal">—</td>
+          <td class="tf-total" id="footTotal">$0.00</td>
         </tr>
       </tfoot>
     </table>
   </div>
 
-  <div class="incomplete-alert is-visible" id="incompleteAlert">
+  <div class="incomplete-alert" id="incompleteAlert">
     <svg class="alert-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M10 1.5L18.5 16.5H1.5L10 1.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
-      <path d="M10 7.5V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-      <circle cx="10" cy="13.6" r="1.05" fill="currentColor"></circle>
+      <path d="M10 1.5L18.5 16.5H1.5L10 1.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M10 7.5V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="10" cy="13.6" r="1.05" fill="currentColor"/>
     </svg>
     <div class="alert-body">
       <div class="alert-title" id="alertTitle">Build Cost and Food Cost % are not yet accurate</div>
-      <div class="alert-text" id="alertText"><strong>9 of 9 ingredients</strong> are still missing a purchase unit cost, a portions-per-unit value, or both. The <strong>Build Cost</strong>, <strong>Food Cost %</strong>, and <strong>Gross Margin</strong> shown below cannot be calculated accurately until every ingredient row is complete. Look for the rows marked “awaiting entry.”</div>
+      <div class="alert-text" id="alertText"></div>
     </div>
   </div>
 
   <div class="summary">
-    <div class="card is-blocked" id="cardBuildWrap">
+    <div class="card" id="cardBuildWrap">
       <div class="card-label">Build Cost</div>
-      <div class="card-val" id="cardBuild">—</div>
-      <div class="card-note note-blocked" id="cardBuildNote">incomplete — fill all rows</div>
+      <div class="card-val" id="cardBuild">$0.00</div>
+      <div class="card-note" id="cardBuildNote">sum of all ingredients</div>
     </div>
     <div class="card">
       <div class="card-label">Menu Price</div>
       <div class="price-input-wrap">
         <span class="dollar">$</span>
-        <input type="number" class="price-input" id="priceInput" value="6.99" step="0.10" min="0">
+        <input type="text" inputmode="decimal" class="price-input" id="priceInput" value="6.99" />
       </div>
       <div class="card-note">your selling price</div>
     </div>
-    <div class="card is-blocked" id="cardPctWrap">
+    <div class="card" id="cardPctWrap">
       <div class="card-label">Food Cost %</div>
-      <div class="card-val" id="cardPct">—</div>
-      <span class="pct-pill incomplete" id="pctPill">needs entries</span>
+      <div class="card-val" id="cardPct">&mdash;</div>
+      <span class="pct-pill" id="pctPill"></span>
     </div>
     <div class="card accent">
       <div class="card-label">Gross Margin</div>
-      <div class="card-val" id="cardMargin">—</div>
+      <div class="card-val" id="cardMargin">$0.00</div>
       <div class="card-note">price minus build cost</div>
     </div>
   </div>
@@ -621,7 +649,7 @@
     Each ingredient: <code>Purchase Unit Cost ÷ Portions per Unit = cost per portion</code>, then <code>× Portion Qty = extended cost</code>. The build cost is the sum of every ingredient's extended cost.
     "Portions per Unit" should reflect <strong>real usable yield</strong> after trim and waste — for sauces and spreads, count usable ounces per jar.
     Food cost % bands: <span class="band good">≤ 32% good</span> &nbsp;·&nbsp; <span class="band watch">32–38% watch</span> &nbsp;·&nbsp; <span class="band over">&gt; 38% over target</span>.
-    <br><br>
+    <br /><br />
     <strong>Note for the PimCore build:</strong> the three locked columns (ingredient, portion unit, portion qty) would be pulled live from the menu item's recipe. The franchisee's three entries (purchase unit, cost, portions per unit) would be saved per franchisee so they can return to their numbers later.
   </div>
 
@@ -629,33 +657,33 @@
   <div id="report">
     <div class="rpt-head">
       <div>
-        <div class="rpt-brand">Franchise Operations · Cost Tools</div>
+        <div class="rpt-brand">Franchise Operations &middot; Cost Tools</div>
         <h1>Theoretical Food Cost Report</h1>
         <div class="rpt-sub">Per-location build cost worksheet</div>
       </div>
       <div class="rpt-stamp">
-        PROTOTYPE v1.0<br>
-        Generated <span id="rptGenDate">May 14, 2026</span><br>
-        Sample data — not live pricing
+        PROTOTYPE v1.0<br />
+        Generated <span id="rptGenDate"></span><br />
+        Sample data &mdash; not live pricing
       </div>
     </div>
 
     <div class="rpt-meta">
       <div class="meta-cell">
         <div class="meta-label">Menu Item</div>
-        <div class="meta-value" id="rptItem">The Famous Star with Cheese</div>
+        <div class="meta-value" id="rptItem">&mdash;</div>
       </div>
       <div class="meta-cell">
         <div class="meta-label">SKU</div>
-        <div class="meta-value" id="rptSku">10042</div>
+        <div class="meta-value" id="rptSku">&mdash;</div>
       </div>
       <div class="meta-cell">
         <div class="meta-label">Franchisee / Location</div>
-        <div class="meta-value muted" id="rptLoc">Not specified</div>
+        <div class="meta-value" id="rptLoc">&mdash;</div>
       </div>
       <div class="meta-cell">
         <div class="meta-label">Date</div>
-        <div class="meta-value" id="rptDate">May 15, 2026</div>
+        <div class="meta-value" id="rptDate">&mdash;</div>
       </div>
     </div>
 
@@ -672,44 +700,44 @@
           <th>Extended Cost</th>
         </tr>
       </thead>
-      <tbody id="rptRows"><tr><td class="l">Beef patty</td><td class="c">each</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">American cheese</td><td class="c">slice</td><td class="c">2</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Seeded bun</td><td class="c">each</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Lettuce</td><td class="c">leaf</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Tomato</td><td class="c">slice</td><td class="c">2</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Red onion</td><td class="c">ring</td><td class="c">3</td><td>Bag</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Dill pickle</td><td class="c">slice</td><td class="c">4</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Special sauce</td><td class="c">oz</td><td class="c">1</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Mayonnaise</td><td class="c">oz</td><td class="c">0.5</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr></tbody>
+      <tbody id="rptRows"></tbody>
       <tfoot>
         <tr>
           <td class="l" colspan="7">Theoretical Build Cost</td>
-          <td class="grand" id="rptBuild">Incomplete</td>
+          <td class="grand" id="rptBuild">$0.00</td>
         </tr>
       </tfoot>
     </table>
 
-    <div class="rpt-notice" id="rptNotice" style="display: block;">⚠  This worksheet is incomplete — 9 of 9 ingredients still need cost and yield entered. Totals will calculate once all rows are filled in.</div>
+    <div class="rpt-notice" id="rptNotice"></div>
 
     <div class="rpt-results">
       <div class="res-cell">
         <div class="res-label">Build Cost</div>
-        <div class="res-value" id="rptResBuild">—</div>
+        <div class="res-value" id="rptResBuild">$0.00</div>
       </div>
       <div class="res-cell">
         <div class="res-label">Menu Price</div>
-        <div class="res-value" id="rptResPrice">$6.99</div>
+        <div class="res-value" id="rptResPrice">$0.00</div>
       </div>
       <div class="res-cell">
         <div class="res-label">Food Cost %</div>
-        <div class="res-value" id="rptResPct">—</div>
-        <span class="res-band" id="rptResBand">Incomplete entry</span>
+        <div class="res-value" id="rptResPct">&mdash;</div>
+        <span class="res-band" id="rptResBand"></span>
       </div>
       <div class="res-cell dark">
         <div class="res-label">Gross Margin</div>
-        <div class="res-value" id="rptResMargin">—</div>
+        <div class="res-value" id="rptResMargin">$0.00</div>
       </div>
     </div>
 
     <div class="rpt-breakdown">
       <h2>Ingredient-by-Ingredient Breakdown</h2>
-      <div id="rptBreakdown"><div class="bd-line bd-line-pending"><span class="bd-ing">Beef patty:</span> Not yet entered. Recipe uses <strong>1 each</strong>; awaiting cost per case and usable patties per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">American cheese:</span> Not yet entered. Recipe uses <strong>2 slices</strong>; awaiting cost per case and usable slices per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Seeded bun:</span> Not yet entered. Recipe uses <strong>1 each</strong>; awaiting cost per case and usable buns per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Lettuce:</span> Not yet entered. Recipe uses <strong>1 leaf</strong>; awaiting cost per case and usable leaves per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Tomato:</span> Not yet entered. Recipe uses <strong>2 slices</strong>; awaiting cost per case and usable slices per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Red onion:</span> Not yet entered. Recipe uses <strong>3 rings</strong>; awaiting cost per bag and usable rings per bag.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Dill pickle:</span> Not yet entered. Recipe uses <strong>4 slices</strong>; awaiting cost per jar and usable slices per jar.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Special sauce:</span> Not yet entered. Recipe uses <strong>1 oz</strong>; awaiting cost per jar and usable ounces per jar.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Mayonnaise:</span> Not yet entered. Recipe uses <strong>0.5 oz</strong>; awaiting cost per jar and usable ounces per jar.</div></div>
+      <div id="rptBreakdown"></div>
     </div>
 
     <div class="rpt-foot">
-      <strong>Method:</strong> For each ingredient, <code>Purchase Unit Cost ÷ Portions per Unit = Cost per Portion</code>, then <code>× Portion Qty = Extended Cost</code>. Build cost is the sum of all extended costs. "Portions per Unit" reflects usable yield after trim and waste. Food cost % bands: ≤32% on target · 32–38% watch · &gt;38% over target.
+      <strong>Method:</strong> For each ingredient, <code>Purchase Unit Cost &divide; Portions per Unit = Cost per Portion</code>, then <code>&times; Portion Qty = Extended Cost</code>. Build cost is the sum of all extended costs. "Portions per Unit" reflects usable yield after trim and waste. Food cost % bands: &le;32% on target &middot; 32&ndash;38% watch &middot; &gt;38% over target.
       Recipe data (ingredient, portion unit, portion quantity) is corporate master data; purchase unit, cost, and portions per unit are entered by the franchisee.
     </div>
   </div>
@@ -839,7 +867,7 @@
         '</td>' +
         '<td class="entry">' +
           '<div class="input-money"><span class="dollar">$</span>' +
-          '<input class="num" type="number" min="0" step="0.50" data-i="' + i + '" data-f="cost" placeholder="0.00" value="' + (entryState[i].cost == null ? "" : entryState[i].cost.toFixed(2)) + '" /></div>' +
+          '<input class="num cost-input" type="text" inputmode="decimal" data-i="' + i + '" data-f="cost" placeholder="0.00" value="' + (entryState[i].cost == null ? "" : entryState[i].cost.toFixed(2)) + '" /></div>' +
           '<span class="caption" id="capCost-' + i + '"></span>' +
         '</td>' +
         '<td class="entry">' +
@@ -859,15 +887,19 @@
     tbody.querySelectorAll("input.num, select.pu-select").forEach(el => {
       el.addEventListener("input", onEntryChange);
       el.addEventListener("change", onEntryChange);
+      el.addEventListener("keyup", onEntryChange);
+      el.addEventListener("blur", onEntryChange);
     });
   }
 
   function onEntryChange(e) {
     const i = parseInt(e.target.dataset.i, 10);
     const f = e.target.dataset.f;
+    if (isNaN(i) || !f) return;
     let v = e.target.value;
     if (f === "cost" || f === "portions") {
-      v = (v === "" || v == null) ? null : (parseFloat(v) || 0);
+      const trimmed = (v == null ? "" : String(v).trim());
+      v = (trimmed === "") ? null : (parseFloat(trimmed) || 0);
     }
     entryState[i][f] = v;
     recalc();
@@ -900,13 +932,31 @@
       if (capCost) capCost.innerHTML = "cost per <em>" + puLower + "</em>";
       if (capPort) capPort.innerHTML = "usable <em>" + ing.noun + "</em> per <em>" + puLower + "</em>";
 
+      // ---- Filled / empty input styling ----
+      const costInput = document.querySelector('input[data-f="cost"][data-i="' + i + '"]');
+      const portInput = document.querySelector('input[data-f="portions"][data-i="' + i + '"]');
+      if (costInput) {
+        costInput.classList.toggle("is-filled", hasCost);
+        const wrap = costInput.closest(".input-money");
+        if (wrap) wrap.classList.toggle("is-filled", hasCost);
+        const cell = costInput.closest("td.entry");
+        if (cell) cell.classList.toggle("entry-filled", hasCost);
+      }
+      if (portInput) {
+        portInput.classList.toggle("is-filled", hasPortions);
+        const cell = portInput.closest("td.entry");
+        if (cell) cell.classList.toggle("entry-filled", hasPortions);
+      }
+
       if (complete) {
         $("ext-" + i).textContent = fmt2(ext);
         $("ext-" + i).classList.remove("ext-pending");
+        $("ext-" + i).classList.add("ext-complete");
         $("extSub-" + i).textContent = fmt4(perPortion) + " / " + ing.portionUnit;
       } else {
         $("ext-" + i).textContent = "—";
         $("ext-" + i).classList.add("ext-pending");
+        $("ext-" + i).classList.remove("ext-complete");
         $("extSub-" + i).textContent = "awaiting entry";
       }
 
@@ -1085,8 +1135,112 @@
   $("locName").addEventListener("input", recalc);
   $("locDate").addEventListener("change", recalc);
 
+  // -----------------------------------------------------------------
+  // POS-style currency input: every digit shifts into the cents place.
+  // Backspace removes the last digit. Decimal/other keys ignored.
+  // Applied to: #priceInput, and every input.cost-input (per-row cost).
+  // -----------------------------------------------------------------
+
+  // Internal "cents" state per input element, keyed via dataset.
+  // We treat the value as an integer number of cents and display
+  // it as cents/100 to two decimals.
+  function getCents(el) {
+    return parseInt(el.dataset.cents || "0", 10) || 0;
+  }
+  function setCents(el, cents, opts) {
+    cents = Math.max(0, Math.min(cents, 99999999)); // cap at $999,999.99
+    el.dataset.cents = String(cents);
+    el.dataset.touched = "1";
+    el.value = (cents / 100).toFixed(2);
+    if (opts && opts.fireInput) {
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
+  function clearCents(el) {
+    el.dataset.cents = "0";
+    el.dataset.touched = "";
+    el.value = "";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  // Initialize from any pre-existing value in the field (e.g. the
+  // default menu price "6.99" or a per-row cost loaded from state).
+  function seedCentsFromValue(el) {
+    const v = parseFloat(el.value);
+    if (!isNaN(v) && v > 0) {
+      el.dataset.cents = String(Math.round(v * 100));
+      el.dataset.touched = "1";
+      el.value = v.toFixed(2);
+    } else {
+      el.dataset.cents = "0";
+      el.dataset.touched = "";
+    }
+  }
+
+  function isPosInput(el) {
+    return el && el.matches && (el.id === "priceInput" || el.matches("input.cost-input"));
+  }
+
+  function handlePosKeydown(e) {
+    if (!isPosInput(e.target)) return;
+    const el = e.target;
+    const key = e.key;
+
+    // Allow navigation/selection keys without interfering
+    if (["Tab","Enter","ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End"].indexOf(key) !== -1) return;
+    // Allow copy/paste/select-all shortcuts
+    if ((e.ctrlKey || e.metaKey) && ["a","c","v","x","z"].indexOf(key.toLowerCase()) !== -1) return;
+
+    // From here, we own the input
+    e.preventDefault();
+
+    if (/^[0-9]$/.test(key)) {
+      const cents = getCents(el) * 10 + parseInt(key, 10);
+      setCents(el, cents, { fireInput: true });
+      return;
+    }
+    if (key === "Backspace" || key === "Delete") {
+      const cents = Math.floor(getCents(el) / 10);
+      if (cents === 0) {
+        clearCents(el);
+      } else {
+        setCents(el, cents, { fireInput: true });
+      }
+      return;
+    }
+    // Ignore '.', ',', and anything else — POS-style.
+  }
+
+  // Handle paste — pull digits only, treat as cents.
+  function handlePosPaste(e) {
+    if (!isPosInput(e.target)) return;
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text") || "";
+    const num = parseFloat(text.replace(/[^0-9.\-]/g, ""));
+    if (!isNaN(num) && num >= 0) {
+      setCents(e.target, Math.round(num * 100), { fireInput: true });
+    }
+  }
+
+  document.addEventListener("keydown", handlePosKeydown);
+  document.addEventListener("paste", handlePosPaste);
+
+  // Seed the menu price field once on load
+  seedCentsFromValue($("priceInput"));
+
+  // After each render of the row inputs, seed their cents state from current values
+  function seedAllCostInputs() {
+    document.querySelectorAll("input.cost-input").forEach(seedCentsFromValue);
+  }
+
+  // Wrap renderRows so cost inputs are seeded after each render
+  const originalRenderRows = renderRows;
+  renderRows = function () {
+    originalRenderRows.apply(this, arguments);
+    seedAllCostInputs();
+  };
+
   initMenu();
 </script>
-
-
-</body></html>
+</body>
+</html>
