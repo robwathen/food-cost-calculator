@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)file:///C:/Users/rwathen/Downloads/food-cost-calculator_4.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franchisee Food Cost Calculator — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Franchisee Food Cost Calculator — Demo_files/css2" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --ink-soft: #57514a;
+    --ink-faint: #8a8278;
+    --paper: #f4f0e8;
+    --card: #fffdf8;
+    --line: #e0d8c8;
+    --line-soft: #ebe4d6;
+    --accent: #c8431f;
+    --accent-deep: #9c3417;
+    --locked-bg: #f0ebe0;
+    --input-bg: #fff6e8;
+    --input-border: #e8b878;
+    --input-ink: #8a4a12;
+    --good: #3f7d3f;
+    --good-bg: #e6efe3;
+    --watch: #b8821f;
+    --watch-bg: #f6edd8;
+    --over: #c8431f;
+    --over-bg: #f6e2da;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Archivo', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 28px 20px 80px;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(200,67,31,0.04) 0, transparent 40%),
+      radial-gradient(circle at 88% 8%, rgba(200,67,31,0.03) 0, transparent 35%);
+  }
+
+  .wrap { max-width: 1160px; margin: 0 auto; }
+
+  .demo-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--ink); color: #f4f0e8;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.01em;
+    padding: 9px 16px; border-radius: var(--radius-sm); margin-bottom: 22px;
+  }
+  .demo-banner strong { color: #fff; font-weight: 700; }
+  .demo-banner .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    flex-shrink: 0; box-shadow: 0 0 0 3px rgba(200,67,31,0.25);
+  }
+
+  .masthead {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 24px; padding-bottom: 18px; margin-bottom: 24px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .brand-line {
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 7px;
+  }
+  .title {
+    font-size: 33px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+  }
+  .subtitle {
+    font-size: 13.5px; color: var(--ink-soft); margin-top: 9px; max-width: 560px;
+  }
+  .subtitle em { font-style: italic; color: var(--accent-deep); font-weight: 600; }
+  .masthead-tag {
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 11px; color: var(--ink-faint); text-align: right;
+    white-space: nowrap; padding-bottom: 3px; line-height: 1.7;
+  }
+
+  .controls {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 19px 22px; margin-bottom: 20px;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-group label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .menu-select {
+    font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600;
+    color: var(--ink); background: var(--paper);
+    border: 1.5px solid var(--ink); border-radius: var(--radius-sm);
+    padding: 9px 38px 9px 13px; cursor: pointer; min-width: 340px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a1714' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  .menu-meta {
+    font-family: 'Spline Sans Mono', monospace; font-size: 12px;
+    color: var(--ink-faint); padding-bottom: 9px;
+  }
+  .controls-spacer { flex: 1; }
+  .btn-print {
+    font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 600;
+    color: #fff; background: var(--ink); border: none;
+    border-radius: var(--radius-sm); padding: 11px 20px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; transition: background 0.15s;
+  }
+  .btn-print:hover { background: var(--accent-deep); }
+  .btn-print svg { display: block; }
+
+  .legend {
+    display: flex; gap: 22px; font-size: 12px; color: var(--ink-soft);
+    margin-bottom: 13px; padding-left: 2px; flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 7px; }
+  .swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .swatch.locked { background: var(--locked-bg); border: 1px solid var(--line); }
+  .swatch.entry { background: var(--input-bg); border: 1px solid var(--input-border); }
+
+  .table-shell {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: 0 2px 12px rgba(26,23,20,0.04);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; text-align: center; padding: 13px 8px;
+    color: var(--ink-soft); background: var(--paper);
+    border-bottom: 2px solid var(--line);
+  }
+  thead th.ing-col { text-align: left; padding-left: 18px; width: 16%; }
+  thead th.entry-col { background: var(--input-bg); color: var(--input-ink); }
+  thead th.ext-col { text-align: right; padding-right: 18px; }
+  thead th .th-sub {
+    display: block; font-size: 9px; font-weight: 500; letter-spacing: 0.03em;
+    color: var(--ink-faint); margin-top: 3px; text-transform: none;
+  }
+  thead th.entry-col .th-sub { color: var(--input-ink); opacity: 0.75; }
+
+  .ing-row td {
+    padding: 12px 8px; vertical-align: top;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .ing-row td.ing-name {
+    text-align: left; padding-left: 18px; font-weight: 600; font-size: 14px;
+  }
+  .ing-row td.locked {
+    text-align: center; background: var(--locked-bg);
+    color: var(--ink-soft); font-size: 13px;
+  }
+  .locked .lock-val { font-weight: 700; color: var(--ink); font-size: 14px; }
+  .locked .lock-sub {
+    display: block; font-size: 9.5px; color: var(--ink-faint);
+    margin-top: 3px; font-family: 'Spline Sans Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+  .ing-row td.entry { background: var(--input-bg); text-align: center; }
+  .ing-row td.ext { text-align: right; padding-right: 18px; }
+
+  select.pu-select, input.num {
+    font-family: 'Spline Sans Mono', monospace; font-size: 13px;
+    border: 1.5px solid var(--input-border); border-radius: 5px;
+    background: #fff; color: var(--ink); width: 100%; height: 34px;
+    padding: 0 8px; transition: border-color 0.12s, box-shadow 0.12s;
+  }
+  select.pu-select {
+    cursor: pointer; appearance: none; padding-right: 26px; text-align: left;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a4a12' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 9px center;
+  }
+  input.num { text-align: right; }
+  input.num:focus, select.pu-select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,67,31,0.12);
+  }
+  .input-money { display: flex; align-items: center; gap: 3px; }
+  .input-money .dollar {
+    font-family: 'Spline Sans Mono', monospace; font-size: 13px;
+    color: var(--input-ink); font-weight: 600;
+  }
+  .caption {
+    display: block; font-size: 10.5px; line-height: 1.3;
+    color: var(--input-ink); margin-top: 5px; font-weight: 500;
+  }
+  .caption em { font-style: normal; font-weight: 700; }
+
+  .ext-val { font-family: 'Spline Sans Mono', monospace; font-size: 14px; font-weight: 700; }
+  .ext-val.ext-pending { color: var(--ink-faint); font-weight: 500; }
+  .ext-sub {
+    display: block; font-family: 'Spline Sans Mono', monospace;
+    font-size: 10px; color: var(--ink-faint); margin-top: 4px;
+  }
+
+  .explain-row td {
+    padding: 0 18px 11px; background: var(--input-bg);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .explain {
+    font-size: 11.5px; color: var(--ink-soft); line-height: 1.45;
+    padding: 7px 11px; background: rgba(255,255,255,0.6);
+    border-left: 2px solid var(--input-border); border-radius: 0 4px 4px 0;
+  }
+  .explain strong { color: var(--ink); font-weight: 700; }
+  .explain.explain-pending {
+    color: var(--ink-faint); font-style: italic;
+    border-left-color: var(--line); background: rgba(255,255,255,0.4);
+  }
+  .explain.explain-pending strong { color: var(--ink-soft); font-style: normal; }
+
+  tfoot td {
+    padding: 14px 8px; background: var(--paper);
+    border-top: 2px solid var(--line); font-size: 13px;
+  }
+  tfoot td.tf-label {
+    text-align: right; padding-right: 14px; font-weight: 600;
+    color: var(--ink-soft); text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.06em;
+  }
+  tfoot td.tf-total {
+    text-align: right; padding-right: 18px;
+    font-family: 'Spline Sans Mono', monospace; font-size: 18px; font-weight: 700;
+  }
+
+  .summary {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; margin-top: 20px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .card .card-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+  }
+  .card .card-val {
+    font-family: 'Spline Sans Mono', monospace; font-size: 26px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .card.accent { background: var(--ink); border-color: var(--ink); }
+  .card.accent .card-label { color: rgba(244,240,232,0.6); }
+  .card.accent .card-val { color: #fff; }
+  .card.accent .card-note { color: rgba(244,240,232,0.5); }
+  .card .price-input-wrap { display: flex; align-items: baseline; gap: 2px; }
+  .card .price-input-wrap .dollar {
+    font-family: 'Spline Sans Mono', monospace; font-size: 22px;
+    font-weight: 700; color: var(--ink);
+  }
+  input.price-input {
+    font-family: 'Spline Sans Mono', monospace; font-size: 24px; font-weight: 700;
+    border: none; border-bottom: 2px solid var(--input-border);
+    background: transparent; color: var(--ink); width: 100%;
+    padding: 0 0 2px; transition: border-color 0.12s;
+  }
+  input.price-input:focus { outline: none; border-bottom-color: var(--accent); }
+  .card .card-note {
+    font-size: 10.5px; color: var(--ink-faint); margin-top: 7px;
+    font-family: 'Spline Sans Mono', monospace;
+  }
+  .pct-pill {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 20px; margin-top: 8px;
+  }
+  .pct-pill.good { background: var(--good-bg); color: var(--good); }
+  .pct-pill.watch { background: var(--watch-bg); color: var(--watch); }
+  .pct-pill.over { background: var(--over-bg); color: var(--over); }
+  .pct-pill.incomplete { background: var(--over-bg); color: var(--over); }
+
+  /* ---- Incomplete-entries alert banner ---- */
+  .incomplete-alert {
+    display: none; align-items: flex-start; gap: 12px;
+    background: var(--over-bg); border: 1.5px solid #e0a892;
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius); padding: 14px 18px; margin-top: 20px;
+  }
+  .incomplete-alert.is-visible { display: flex; }
+  .incomplete-alert .alert-icon {
+    color: var(--accent); flex-shrink: 0; margin-top: 1px;
+  }
+  .incomplete-alert .alert-title {
+    font-size: 14px; font-weight: 700; color: var(--accent-deep);
+    margin-bottom: 3px;
+  }
+  .incomplete-alert .alert-text {
+    font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;
+  }
+  .incomplete-alert .alert-text strong { color: var(--accent-deep); font-weight: 700; }
+
+  /* card warning state when totals can't be computed */
+  .card.is-blocked { border-color: #e0a892; background: #fdf4f0; }
+  .card.is-blocked .card-val { color: var(--ink-faint); }
+  .card .card-note.note-blocked { color: var(--accent); font-weight: 600; }
+
+  .footnote {
+    margin-top: 24px; padding: 16px 20px;
+    background: var(--card); border: 1px dashed var(--line);
+    border-radius: var(--radius); font-size: 12px; color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .footnote h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 7px;
+  }
+  .footnote .band { font-weight: 700; }
+  .footnote .band.good { color: var(--good); }
+  .footnote .band.watch { color: var(--watch); }
+  .footnote .band.over { color: var(--over); }
+  .footnote code {
+    font-family: 'Spline Sans Mono', monospace; font-size: 11px;
+    background: var(--paper); padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* ---- Header capture fields (screen) ---- */
+  .who-fields { display: flex; gap: 16px; }
+  .who-fields .field-group input {
+    font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 500;
+    color: var(--ink); background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: var(--radius-sm);
+    padding: 8px 12px; min-width: 190px; transition: border-color 0.12s;
+  }
+  .who-fields .field-group input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .who-fields .field-group input::placeholder { color: var(--ink-faint); }
+
+  /* ================= PRINT REPORT ================= */
+  /* The report lives in #report, hidden on screen, shown only for print.
+     Everything else is hidden for print. */
+  #report { display: none; }
+
+  @media print {
+    @page { margin: 14mm 15mm; }
+    body {
+      background: #fff; padding: 0; background-image: none;
+      color: #1a1714;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .wrap > *:not(#report) { display: none !important; }
+    #report { display: block; }
+
+    .rpt-head {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 2.5pt solid #1a1714; padding-bottom: 10pt; margin-bottom: 4pt;
+    }
+    .rpt-head .rpt-brand {
+      font-family: 'Spline Sans Mono', monospace; font-size: 8pt;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #c8431f; font-weight: 600; margin-bottom: 5pt;
+    }
+    .rpt-head h1 {
+      font-size: 19pt; font-weight: 800; letter-spacing: -0.02em;
+      line-height: 1.1; color: #1a1714;
+    }
+    .rpt-head .rpt-sub {
+      font-size: 9pt; color: #57514a; margin-top: 3pt;
+    }
+    .rpt-head .rpt-stamp {
+      font-family: 'Spline Sans Mono', monospace; font-size: 7.5pt;
+      color: #8a8278; text-align: right; line-height: 1.6; white-space: nowrap;
+    }
+
+    /* meta strip: who / location / date / price */
+    .rpt-meta {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border: 0.75pt solid #d8d0c0; border-radius: 4pt;
+      margin: 12pt 0 14pt; overflow: hidden;
+    }
+    .rpt-meta .meta-cell {
+      flex: 1; min-width: 25%; padding: 7pt 11pt;
+      border-right: 0.75pt solid #d8d0c0;
+    }
+    .rpt-meta .meta-cell:last-child { border-right: none; }
+    .rpt-meta .meta-label {
+      font-family: 'Spline Sans Mono', monospace; font-size: 6.5pt;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: #8a8278; margin-bottom: 3pt;
+    }
+    .rpt-meta .meta-value {
+      font-size: 11pt; font-weight: 700; color: #1a1714;
+    }
+    .rpt-meta .meta-value.muted { color: #8a8278; font-weight: 500; font-style: italic; }
+
+    /* report table */
+    .rpt-table { width: 100%; border-collapse: collapse; margin-bottom: 4pt; }
+    .rpt-table thead th {
+      font-size: 6.8pt; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: #57514a;
+      border-bottom: 1.25pt solid #1a1714;
+      padding: 5pt 5pt; text-align: right; vertical-align: bottom;
+    }
+    .rpt-table thead th.l { text-align: left; }
+    .rpt-table thead th.c { text-align: center; }
+    .rpt-table tbody td {
+      font-size: 8.5pt; padding: 5pt 5pt; text-align: right;
+      border-bottom: 0.5pt solid #e0d8c8; vertical-align: top;
+    }
+    .rpt-table tbody td.l { text-align: left; font-weight: 600; }
+    .rpt-table tbody td.c { text-align: center; }
+    .rpt-table tbody td.mono {
+      font-family: 'Spline Sans Mono', monospace; font-size: 8pt;
+    }
+    .rpt-table tbody tr:nth-child(even) td { background: #faf7f0; }
+    .rpt-table tbody td.ext-col {
+      font-family: 'Spline Sans Mono', monospace; font-weight: 700; font-size: 8.5pt;
+    }
+    .rpt-table tfoot td {
+      font-size: 9pt; font-weight: 700; padding: 7pt 5pt;
+      border-top: 1.25pt solid #1a1714; text-align: right;
+    }
+    .rpt-table tfoot td.l {
+      text-align: right; text-transform: uppercase; letter-spacing: 0.05em;
+      font-size: 8pt; color: #57514a;
+    }
+    .rpt-table tfoot td.grand {
+      font-family: 'Spline Sans Mono', monospace; font-size: 12pt;
+    }
+
+    /* incomplete worksheet notice */
+    .rpt-notice {
+      display: none;
+      font-size: 8pt; font-weight: 600; color: #9c3417;
+      background: #f6e2da; border: 0.75pt solid #e0b0a0;
+      border-radius: 4pt; padding: 6pt 10pt; margin: 8pt 0 2pt;
+      line-height: 1.4;
+    }
+
+    /* results panel */
+    .rpt-results {
+      display: flex; gap: 0; margin: 14pt 0;
+      border: 1pt solid #1a1714; border-radius: 4pt; overflow: hidden;
+      break-inside: avoid;
+    }
+    .rpt-results .res-cell {
+      flex: 1; padding: 9pt 12pt; border-right: 0.75pt solid #d8d0c0;
+    }
+    .rpt-results .res-cell:last-child { border-right: none; }
+    .rpt-results .res-cell.dark { background: #1a1714; }
+    .rpt-results .res-label {
+      font-family: 'Spline Sans Mono', monospace; font-size: 6.5pt;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: #8a8278; margin-bottom: 4pt;
+    }
+    .rpt-results .res-cell.dark .res-label { color: rgba(255,255,255,0.55); }
+    .rpt-results .res-value {
+      font-family: 'Spline Sans Mono', monospace;
+      font-size: 15pt; font-weight: 700; color: #1a1714;
+    }
+    .rpt-results .res-cell.dark .res-value { color: #fff; }
+    .rpt-results .res-band {
+      display: inline-block; font-size: 7pt; font-weight: 700;
+      margin-top: 3pt; padding: 1pt 6pt; border-radius: 8pt;
+      border: 0.75pt solid currentColor;
+    }
+    .res-band.good { color: #3f7d3f; }
+    .res-band.watch { color: #b8821f; }
+    .res-band.over { color: #c8431f; }
+
+    /* breakdown sentences */
+    .rpt-breakdown { margin-top: 6pt; break-inside: auto; }
+    .rpt-breakdown h2 {
+      font-size: 8pt; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: #8a8278;
+      border-bottom: 0.5pt solid #d8d0c0; padding-bottom: 3pt; margin-bottom: 6pt;
+    }
+    .rpt-breakdown .bd-line {
+      font-size: 8.2pt; line-height: 1.5; color: #57514a;
+      padding: 3pt 0 3pt 9pt; border-left: 1.5pt solid #e8b878;
+      margin-bottom: 4pt; break-inside: avoid;
+    }
+    .rpt-breakdown .bd-line strong { color: #1a1714; font-weight: 700; }
+    .rpt-breakdown .bd-line .bd-ing {
+      font-weight: 700; color: #1a1714; text-transform: none;
+    }
+    .rpt-breakdown .bd-line.bd-line-pending {
+      color: #8a8278; font-style: italic; border-left-color: #d8d0c0;
+    }
+    .rpt-breakdown .bd-line.bd-line-pending strong {
+      color: #57514a; font-style: normal;
+    }
+
+    .rpt-foot {
+      margin-top: 14pt; padding-top: 7pt;
+      border-top: 0.5pt solid #d8d0c0;
+      font-size: 7pt; color: #8a8278; line-height: 1.5;
+    }
+    .rpt-foot code {
+      font-family: 'Spline Sans Mono', monospace; font-size: 6.8pt;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .masthead { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .masthead-tag { text-align: left; }
+    .table-shell { overflow-x: auto; }
+    table { min-width: 820px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="demo-banner">
+    <span class="dot"></span>
+    <span><strong>Demo / concept prototype.</strong>&nbsp; Sample data only — not live supplier pricing. Built to gather feedback and to illustrate the intended behavior for the PimCore build.</span>
+  </div>
+
+  <div class="masthead">
+    <div>
+      <div class="brand-line">Franchise Operations · Cost Tools</div>
+      <h1 class="title">Theoretical Food Cost Calculator</h1>
+      <p class="subtitle">Enter what <em>your</em> location pays for each ingredient. The recipe — every ingredient and its portion — comes from corporate master data and can't be changed. The calculator does the rest.</p>
+    </div>
+    <div class="masthead-tag">
+      PROTOTYPE v1.0<br>
+      <span id="stamp">May 14, 2026</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="field-group">
+      <label for="menuSelect">Menu Item</label>
+      <select id="menuSelect" class="menu-select"><option value="0">The Famous Star with Cheese</option><option value="1">Classic Cheeseburger</option><option value="2">Crispy Chicken Sandwich</option><option value="3">Garden Side Salad</option></select>
+    </div>
+    <div class="menu-meta" id="menuMeta">SKU 10042 · 9 ingredients</div>
+    <div class="who-fields">
+      <div class="field-group">
+        <label for="locName">Franchisee / Location</label>
+        <input type="text" id="locName" placeholder="e.g. Eastgate Plaza #214">
+      </div>
+      <div class="field-group">
+        <label for="locDate">Date</label>
+        <input type="date" id="locDate">
+      </div>
+    </div>
+    <div class="controls-spacer"></div>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 10h8v4H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+      </svg>
+      Print / Save PDF
+    </button>
+  </div>
+
+  <div class="legend">
+    <span><span class="swatch locked"></span> From corporate master data — locked</span>
+    <span><span class="swatch entry"></span> You enter this</span>
+  </div>
+
+  <div class="table-shell">
+    <table>
+      <thead>
+        <tr>
+          <th class="ing-col">Ingredient</th>
+          <th>Portion Unit<span class="th-sub">how it's measured</span></th>
+          <th>Portion Qty<span class="th-sub">used in recipe</span></th>
+          <th class="entry-col">Purchase Unit<span class="th-sub">how you buy it</span></th>
+          <th class="entry-col">Purchase Unit Cost<span class="th-sub">what you pay</span></th>
+          <th class="entry-col">Portions per Unit<span class="th-sub">usable yield</span></th>
+          <th class="ext-col">Extended Cost<span class="th-sub">in this item</span></th>
+        </tr>
+      </thead>
+      <tbody id="rows"><tr class="ing-row"><td class="ing-name">Beef patty</td><td class="locked"><span class="lock-val">each</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="0" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="0" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-0">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="0" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-0">usable <em>patties</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-0">—</span><span class="ext-sub" id="extSub-0">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-0">Enter the <strong>cost per case</strong> and the <strong>usable patties per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 each</strong> of beef patty.</div></td></tr><tr class="ing-row"><td class="ing-name">American cheese</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">2</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="1" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="1" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-1">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="1" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-1">usable <em>slices</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-1">—</span><span class="ext-sub" id="extSub-1">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-1">Enter the <strong>cost per case</strong> and the <strong>usable slices per case</strong> to calculate this ingredient's cost. The recipe uses <strong>2 slices</strong> of american cheese.</div></td></tr><tr class="ing-row"><td class="ing-name">Seeded bun</td><td class="locked"><span class="lock-val">each</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="2" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="2" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-2">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="2" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-2">usable <em>buns</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-2">—</span><span class="ext-sub" id="extSub-2">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-2">Enter the <strong>cost per case</strong> and the <strong>usable buns per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 each</strong> of seeded bun.</div></td></tr><tr class="ing-row"><td class="ing-name">Lettuce</td><td class="locked"><span class="lock-val">leaf</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="3" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="3" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-3">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="3" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-3">usable <em>leaves</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-3">—</span><span class="ext-sub" id="extSub-3">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-3">Enter the <strong>cost per case</strong> and the <strong>usable leaves per case</strong> to calculate this ingredient's cost. The recipe uses <strong>1 leaf</strong> of lettuce.</div></td></tr><tr class="ing-row"><td class="ing-name">Tomato</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">2</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="4" data-f="pUnit"><option value="Case" selected="">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="4" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-4">cost per <em>case</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="4" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-4">usable <em>slices</em> per <em>case</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-4">—</span><span class="ext-sub" id="extSub-4">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-4">Enter the <strong>cost per case</strong> and the <strong>usable slices per case</strong> to calculate this ingredient's cost. The recipe uses <strong>2 slices</strong> of tomato.</div></td></tr><tr class="ing-row"><td class="ing-name">Red onion</td><td class="locked"><span class="lock-val">ring</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">3</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="5" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag" selected="">Bag</option><option value="Jar">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="5" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-5">cost per <em>bag</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="5" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-5">usable <em>rings</em> per <em>bag</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-5">—</span><span class="ext-sub" id="extSub-5">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-5">Enter the <strong>cost per bag</strong> and the <strong>usable rings per bag</strong> to calculate this ingredient's cost. The recipe uses <strong>3 rings</strong> of red onion.</div></td></tr><tr class="ing-row"><td class="ing-name">Dill pickle</td><td class="locked"><span class="lock-val">slice</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">4</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="6" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="6" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-6">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="6" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-6">usable <em>slices</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-6">—</span><span class="ext-sub" id="extSub-6">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-6">Enter the <strong>cost per jar</strong> and the <strong>usable slices per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>4 slices</strong> of dill pickle.</div></td></tr><tr class="ing-row"><td class="ing-name">Special sauce</td><td class="locked"><span class="lock-val">oz</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">1</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="7" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="7" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-7">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="7" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-7">usable <em>ounces</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-7">—</span><span class="ext-sub" id="extSub-7">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-7">Enter the <strong>cost per jar</strong> and the <strong>usable ounces per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>1 oz</strong> of special sauce.</div></td></tr><tr class="ing-row"><td class="ing-name">Mayonnaise</td><td class="locked"><span class="lock-val">oz</span><span class="lock-sub">measured as</span></td><td class="locked"><span class="lock-val">0.5</span><span class="lock-sub">per build</span></td><td class="entry"><select class="pu-select" data-i="8" data-f="pUnit"><option value="Case">Case</option><option value="Box">Box</option><option value="Bag">Bag</option><option value="Jar" selected="">Jar</option><option value="Bottle">Bottle</option><option value="Can">Can</option><option value="Tub">Tub</option><option value="Pack">Pack</option><option value="Each">Each</option></select><span class="caption">you buy by the…</span></td><td class="entry"><div class="input-money"><span class="dollar">$</span><input class="num" type="number" min="0" step="0.50" data-i="8" data-f="cost" placeholder="0.00" value=""></div><span class="caption" id="capCost-8">cost per <em>jar</em></span></td><td class="entry"><input class="num" type="number" min="0" step="1" data-i="8" data-f="portions" placeholder="0" value=""><span class="caption" id="capPort-8">usable <em>ounces</em> per <em>jar</em></span></td><td class="ext"><span class="ext-val ext-pending" id="ext-8">—</span><span class="ext-sub" id="extSub-8">awaiting entry</span></td></tr><tr class="explain-row"><td colspan="7"><div class="explain explain-pending" id="explain-8">Enter the <strong>cost per jar</strong> and the <strong>usable ounces per jar</strong> to calculate this ingredient's cost. The recipe uses <strong>0.5 oz</strong> of mayonnaise.</div></td></tr></tbody>
+      <tfoot>
+        <tr>
+          <td class="tf-label" colspan="6">Theoretical Build Cost</td>
+          <td class="tf-total" id="footTotal">—</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="incomplete-alert is-visible" id="incompleteAlert">
+    <svg class="alert-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 1.5L18.5 16.5H1.5L10 1.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+      <path d="M10 7.5V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+      <circle cx="10" cy="13.6" r="1.05" fill="currentColor"></circle>
+    </svg>
+    <div class="alert-body">
+      <div class="alert-title" id="alertTitle">Build Cost and Food Cost % are not yet accurate</div>
+      <div class="alert-text" id="alertText"><strong>9 of 9 ingredients</strong> are still missing a purchase unit cost, a portions-per-unit value, or both. The <strong>Build Cost</strong>, <strong>Food Cost %</strong>, and <strong>Gross Margin</strong> shown below cannot be calculated accurately until every ingredient row is complete. Look for the rows marked “awaiting entry.”</div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="card is-blocked" id="cardBuildWrap">
+      <div class="card-label">Build Cost</div>
+      <div class="card-val" id="cardBuild">—</div>
+      <div class="card-note note-blocked" id="cardBuildNote">incomplete — fill all rows</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Menu Price</div>
+      <div class="price-input-wrap">
+        <span class="dollar">$</span>
+        <input type="number" class="price-input" id="priceInput" value="6.99" step="0.10" min="0">
+      </div>
+      <div class="card-note">your selling price</div>
+    </div>
+    <div class="card is-blocked" id="cardPctWrap">
+      <div class="card-label">Food Cost %</div>
+      <div class="card-val" id="cardPct">—</div>
+      <span class="pct-pill incomplete" id="pctPill">needs entries</span>
+    </div>
+    <div class="card accent">
+      <div class="card-label">Gross Margin</div>
+      <div class="card-val" id="cardMargin">—</div>
+      <div class="card-note">price minus build cost</div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <h4>How the math works</h4>
+    Each ingredient: <code>Purchase Unit Cost ÷ Portions per Unit = cost per portion</code>, then <code>× Portion Qty = extended cost</code>. The build cost is the sum of every ingredient's extended cost.
+    "Portions per Unit" should reflect <strong>real usable yield</strong> after trim and waste — for sauces and spreads, count usable ounces per jar.
+    Food cost % bands: <span class="band good">≤ 32% good</span> &nbsp;·&nbsp; <span class="band watch">32–38% watch</span> &nbsp;·&nbsp; <span class="band over">&gt; 38% over target</span>.
+    <br><br>
+    <strong>Note for the PimCore build:</strong> the three locked columns (ingredient, portion unit, portion qty) would be pulled live from the menu item's recipe. The franchisee's three entries (purchase unit, cost, portions per unit) would be saved per franchisee so they can return to their numbers later.
+  </div>
+
+  <!-- ============ PRINT-ONLY REPORT ============ -->
+  <div id="report">
+    <div class="rpt-head">
+      <div>
+        <div class="rpt-brand">Franchise Operations · Cost Tools</div>
+        <h1>Theoretical Food Cost Report</h1>
+        <div class="rpt-sub">Per-location build cost worksheet</div>
+      </div>
+      <div class="rpt-stamp">
+        PROTOTYPE v1.0<br>
+        Generated <span id="rptGenDate">May 14, 2026</span><br>
+        Sample data — not live pricing
+      </div>
+    </div>
+
+    <div class="rpt-meta">
+      <div class="meta-cell">
+        <div class="meta-label">Menu Item</div>
+        <div class="meta-value" id="rptItem">The Famous Star with Cheese</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">SKU</div>
+        <div class="meta-value" id="rptSku">10042</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Franchisee / Location</div>
+        <div class="meta-value muted" id="rptLoc">Not specified</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Date</div>
+        <div class="meta-value" id="rptDate">May 15, 2026</div>
+      </div>
+    </div>
+
+    <table class="rpt-table">
+      <thead>
+        <tr>
+          <th class="l">Ingredient</th>
+          <th class="c">Portion Unit</th>
+          <th class="c">Portion Qty</th>
+          <th>Purchase Unit</th>
+          <th>Unit Cost</th>
+          <th>Portions / Unit</th>
+          <th>Cost / Portion</th>
+          <th>Extended Cost</th>
+        </tr>
+      </thead>
+      <tbody id="rptRows"><tr><td class="l">Beef patty</td><td class="c">each</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">American cheese</td><td class="c">slice</td><td class="c">2</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Seeded bun</td><td class="c">each</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Lettuce</td><td class="c">leaf</td><td class="c">1</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Tomato</td><td class="c">slice</td><td class="c">2</td><td>Case</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Red onion</td><td class="c">ring</td><td class="c">3</td><td>Bag</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Dill pickle</td><td class="c">slice</td><td class="c">4</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Special sauce</td><td class="c">oz</td><td class="c">1</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr><tr><td class="l">Mayonnaise</td><td class="c">oz</td><td class="c">0.5</td><td>Jar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="ext-col">—</td></tr></tbody>
+      <tfoot>
+        <tr>
+          <td class="l" colspan="7">Theoretical Build Cost</td>
+          <td class="grand" id="rptBuild">Incomplete</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="rpt-notice" id="rptNotice" style="display: block;">⚠  This worksheet is incomplete — 9 of 9 ingredients still need cost and yield entered. Totals will calculate once all rows are filled in.</div>
+
+    <div class="rpt-results">
+      <div class="res-cell">
+        <div class="res-label">Build Cost</div>
+        <div class="res-value" id="rptResBuild">—</div>
+      </div>
+      <div class="res-cell">
+        <div class="res-label">Menu Price</div>
+        <div class="res-value" id="rptResPrice">$6.99</div>
+      </div>
+      <div class="res-cell">
+        <div class="res-label">Food Cost %</div>
+        <div class="res-value" id="rptResPct">—</div>
+        <span class="res-band" id="rptResBand">Incomplete entry</span>
+      </div>
+      <div class="res-cell dark">
+        <div class="res-label">Gross Margin</div>
+        <div class="res-value" id="rptResMargin">—</div>
+      </div>
+    </div>
+
+    <div class="rpt-breakdown">
+      <h2>Ingredient-by-Ingredient Breakdown</h2>
+      <div id="rptBreakdown"><div class="bd-line bd-line-pending"><span class="bd-ing">Beef patty:</span> Not yet entered. Recipe uses <strong>1 each</strong>; awaiting cost per case and usable patties per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">American cheese:</span> Not yet entered. Recipe uses <strong>2 slices</strong>; awaiting cost per case and usable slices per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Seeded bun:</span> Not yet entered. Recipe uses <strong>1 each</strong>; awaiting cost per case and usable buns per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Lettuce:</span> Not yet entered. Recipe uses <strong>1 leaf</strong>; awaiting cost per case and usable leaves per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Tomato:</span> Not yet entered. Recipe uses <strong>2 slices</strong>; awaiting cost per case and usable slices per case.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Red onion:</span> Not yet entered. Recipe uses <strong>3 rings</strong>; awaiting cost per bag and usable rings per bag.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Dill pickle:</span> Not yet entered. Recipe uses <strong>4 slices</strong>; awaiting cost per jar and usable slices per jar.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Special sauce:</span> Not yet entered. Recipe uses <strong>1 oz</strong>; awaiting cost per jar and usable ounces per jar.</div><div class="bd-line bd-line-pending"><span class="bd-ing">Mayonnaise:</span> Not yet entered. Recipe uses <strong>0.5 oz</strong>; awaiting cost per jar and usable ounces per jar.</div></div>
+    </div>
+
+    <div class="rpt-foot">
+      <strong>Method:</strong> For each ingredient, <code>Purchase Unit Cost ÷ Portions per Unit = Cost per Portion</code>, then <code>× Portion Qty = Extended Cost</code>. Build cost is the sum of all extended costs. "Portions per Unit" reflects usable yield after trim and waste. Food cost % bands: ≤32% on target · 32–38% watch · &gt;38% over target.
+      Recipe data (ingredient, portion unit, portion quantity) is corporate master data; purchase unit, cost, and portions per unit are entered by the franchisee.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ---- Sample master data (in production: pulled from PimCore recipes) ----
+  const PURCHASE_UNITS = ["Case", "Box", "Bag", "Jar", "Bottle", "Can", "Tub", "Pack", "Each"];
+
+  const MENU_ITEMS = [
+    {
+      name: "The Famous Star with Cheese",
+      sku: "10042",
+      price: 6.99,
+      ingredients: [
+        { name: "Beef patty",      portionUnit: "each",  noun: "patties", portionQty: 1,   pUnit: "Case", cost: 89.00, portions: 120 },
+        { name: "American cheese", portionUnit: "slice", noun: "slices",  portionQty: 2,   pUnit: "Case", cost: 44.00, portions: 200 },
+        { name: "Seeded bun",      portionUnit: "each",  noun: "buns",    portionQty: 1,   pUnit: "Case", cost: 28.00, portions: 120 },
+        { name: "Lettuce",         portionUnit: "leaf",  noun: "leaves",  portionQty: 1,   pUnit: "Case", cost: 34.00, portions: 300 },
+        { name: "Tomato",          portionUnit: "slice", noun: "slices",  portionQty: 2,   pUnit: "Case", cost: 38.00, portions: 400 },
+        { name: "Red onion",       portionUnit: "ring",  noun: "rings",   portionQty: 3,   pUnit: "Bag",  cost: 16.00, portions: 320 },
+        { name: "Dill pickle",     portionUnit: "slice", noun: "slices",  portionQty: 4,   pUnit: "Jar",  cost: 13.00, portions: 360 },
+        { name: "Special sauce",   portionUnit: "oz",    noun: "ounces",  portionQty: 1,   pUnit: "Jar",  cost: 9.00,  portions: 80  },
+        { name: "Mayonnaise",      portionUnit: "oz",    noun: "ounces",  portionQty: 0.5, pUnit: "Jar",  cost: 6.50,  portions: 130 }
+      ]
+    },
+    {
+      name: "Classic Cheeseburger",
+      sku: "10018",
+      price: 4.49,
+      ingredients: [
+        { name: "Beef patty",      portionUnit: "each",  noun: "patties", portionQty: 1, pUnit: "Case", cost: 89.00, portions: 120 },
+        { name: "American cheese", portionUnit: "slice", noun: "slices",  portionQty: 1, pUnit: "Case", cost: 44.00, portions: 200 },
+        { name: "Plain bun",       portionUnit: "each",  noun: "buns",    portionQty: 1, pUnit: "Case", cost: 24.00, portions: 120 },
+        { name: "Dill pickle",     portionUnit: "slice", noun: "slices",  portionQty: 3, pUnit: "Jar",  cost: 13.00, portions: 360 },
+        { name: "Ketchup",         portionUnit: "oz",    noun: "ounces",  portionQty: 0.5, pUnit: "Jar", cost: 7.50,  portions: 140 },
+        { name: "Mustard",         portionUnit: "oz",    noun: "ounces",  portionQty: 0.25, pUnit: "Jar", cost: 6.00, portions: 150 }
+      ]
+    },
+    {
+      name: "Crispy Chicken Sandwich",
+      sku: "10071",
+      price: 5.79,
+      ingredients: [
+        { name: "Breaded chicken fillet", portionUnit: "each",  noun: "fillets", portionQty: 1, pUnit: "Case", cost: 102.00, portions: 80 },
+        { name: "Brioche bun",            portionUnit: "each",  noun: "buns",    portionQty: 1, pUnit: "Case", cost: 32.00,  portions: 96 },
+        { name: "Lettuce",                portionUnit: "leaf",  noun: "leaves",  portionQty: 2, pUnit: "Case", cost: 34.00,  portions: 300 },
+        { name: "Tomato",                 portionUnit: "slice", noun: "slices",  portionQty: 2, pUnit: "Case", cost: 38.00,  portions: 400 },
+        { name: "Dill pickle",            portionUnit: "slice", noun: "slices",  portionQty: 3, pUnit: "Jar",  cost: 13.00,  portions: 360 },
+        { name: "Mayonnaise",             portionUnit: "oz",    noun: "ounces",  portionQty: 0.75, pUnit: "Jar", cost: 6.50, portions: 130 }
+      ]
+    },
+    {
+      name: "Garden Side Salad",
+      sku: "10090",
+      price: 3.29,
+      ingredients: [
+        { name: "Mixed greens",    portionUnit: "oz",    noun: "ounces",   portionQty: 3,   pUnit: "Case", cost: 41.00, portions: 320 },
+        { name: "Cherry tomato",   portionUnit: "each",  noun: "tomatoes", portionQty: 4,   pUnit: "Case", cost: 36.00, portions: 600 },
+        { name: "Cucumber",        portionUnit: "slice", noun: "slices",   portionQty: 5,   pUnit: "Case", cost: 22.00, portions: 480 },
+        { name: "Shredded carrot", portionUnit: "oz",    noun: "ounces",   portionQty: 1,   pUnit: "Bag",  cost: 14.00, portions: 160 },
+        { name: "Crouton",         portionUnit: "oz",    noun: "ounces",   portionQty: 0.5, pUnit: "Bag",  cost: 11.00, portions: 90  },
+        { name: "Ranch dressing",  portionUnit: "oz",    noun: "ounces",   portionQty: 2,   pUnit: "Jar",  cost: 12.00, portions: 128 }
+      ]
+    }
+  ];
+
+  let currentItem = null;
+  let entryState = [];
+
+  const $ = id => document.getElementById(id);
+  const fmt2 = n => "$" + (isFinite(n) ? n : 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmt4 = n => "$" + (isFinite(n) ? n : 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+
+  function pluralUnit(qty, unitWord, noun) {
+    if (unitWord === "oz") return qty + " oz";
+    return qty + " " + (qty === 1 ? unitWord : noun);
+  }
+
+  function initMenu() {
+    const sel = $("menuSelect");
+    MENU_ITEMS.forEach((item, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = item.name;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener("change", () => loadItem(parseInt(sel.value, 10)));
+    loadItem(0);
+  }
+
+  function loadItem(index) {
+    currentItem = MENU_ITEMS[index];
+    entryState = currentItem.ingredients.map(ing => ({
+      pUnit: ing.pUnit,   // purchase unit keeps a sensible default selection
+      cost: null,         // franchisee fills this in
+      portions: null      // franchisee fills this in
+    }));
+    $("menuMeta").textContent = "SKU " + currentItem.sku + " · " + currentItem.ingredients.length + " ingredients";
+    $("priceInput").value = currentItem.price.toFixed(2);
+    renderRows();
+    recalc();
+  }
+
+  function renderRows() {
+    const tbody = $("rows");
+    tbody.innerHTML = "";
+
+    currentItem.ingredients.forEach((ing, i) => {
+      const tr = document.createElement("tr");
+      tr.className = "ing-row";
+
+      const puOptions = PURCHASE_UNITS.map(u =>
+        '<option value="' + u + '"' + (u === entryState[i].pUnit ? " selected" : "") + '>' + u + '</option>'
+      ).join("");
+
+      tr.innerHTML =
+        '<td class="ing-name">' + ing.name + '</td>' +
+        '<td class="locked"><span class="lock-val">' + ing.portionUnit + '</span>' +
+          '<span class="lock-sub">measured as</span></td>' +
+        '<td class="locked"><span class="lock-val">' + ing.portionQty + '</span>' +
+          '<span class="lock-sub">per build</span></td>' +
+        '<td class="entry">' +
+          '<select class="pu-select" data-i="' + i + '" data-f="pUnit">' + puOptions + '</select>' +
+          '<span class="caption">you buy by the&hellip;</span>' +
+        '</td>' +
+        '<td class="entry">' +
+          '<div class="input-money"><span class="dollar">$</span>' +
+          '<input class="num" type="number" min="0" step="0.50" data-i="' + i + '" data-f="cost" placeholder="0.00" value="' + (entryState[i].cost == null ? "" : entryState[i].cost.toFixed(2)) + '" /></div>' +
+          '<span class="caption" id="capCost-' + i + '"></span>' +
+        '</td>' +
+        '<td class="entry">' +
+          '<input class="num" type="number" min="0" step="1" data-i="' + i + '" data-f="portions" placeholder="0" value="' + (entryState[i].portions == null ? "" : entryState[i].portions) + '" />' +
+          '<span class="caption" id="capPort-' + i + '"></span>' +
+        '</td>' +
+        '<td class="ext"><span class="ext-val" id="ext-' + i + '">$0.00</span>' +
+          '<span class="ext-sub" id="extSub-' + i + '"></span></td>';
+      tbody.appendChild(tr);
+
+      const explainTr = document.createElement("tr");
+      explainTr.className = "explain-row";
+      explainTr.innerHTML = '<td colspan="7"><div class="explain" id="explain-' + i + '"></div></td>';
+      tbody.appendChild(explainTr);
+    });
+
+    tbody.querySelectorAll("input.num, select.pu-select").forEach(el => {
+      el.addEventListener("input", onEntryChange);
+      el.addEventListener("change", onEntryChange);
+    });
+  }
+
+  function onEntryChange(e) {
+    const i = parseInt(e.target.dataset.i, 10);
+    const f = e.target.dataset.f;
+    let v = e.target.value;
+    if (f === "cost" || f === "portions") {
+      v = (v === "" || v == null) ? null : (parseFloat(v) || 0);
+    }
+    entryState[i][f] = v;
+    recalc();
+  }
+
+  function recalc() {
+    let buildCost = 0;
+    let allComplete = true;
+    const computed = []; // per-ingredient results, reused for the report
+
+    currentItem.ingredients.forEach((ing, i) => {
+      const st = entryState[i];
+      const puLower = String(st.pUnit).toLowerCase();
+      const hasCost = st.cost != null && st.cost !== "";
+      const hasPortions = st.portions != null && st.portions !== "" && st.portions > 0;
+      const complete = hasCost && hasPortions;
+      if (!complete) allComplete = false;
+
+      const perPortion = complete ? st.cost / st.portions : 0;
+      const ext = complete ? perPortion * ing.portionQty : 0;
+      if (complete) buildCost += ext;
+
+      computed.push({
+        ing: ing, st: st, puLower: puLower,
+        perPortion: perPortion, ext: ext, complete: complete
+      });
+
+      const capCost = $("capCost-" + i);
+      const capPort = $("capPort-" + i);
+      if (capCost) capCost.innerHTML = "cost per <em>" + puLower + "</em>";
+      if (capPort) capPort.innerHTML = "usable <em>" + ing.noun + "</em> per <em>" + puLower + "</em>";
+
+      if (complete) {
+        $("ext-" + i).textContent = fmt2(ext);
+        $("ext-" + i).classList.remove("ext-pending");
+        $("extSub-" + i).textContent = fmt4(perPortion) + " / " + ing.portionUnit;
+      } else {
+        $("ext-" + i).textContent = "—";
+        $("ext-" + i).classList.add("ext-pending");
+        $("extSub-" + i).textContent = "awaiting entry";
+      }
+
+      const qtyPhrase = pluralUnit(ing.portionQty, ing.portionUnit, ing.noun);
+      if (complete) {
+        $("explain-" + i).innerHTML =
+          "One <strong>" + puLower + "</strong> of " + ing.name.toLowerCase() +
+          " costs <strong>" + fmt2(st.cost) + "</strong> and yields <strong>" +
+          st.portions + " " + ing.noun + "</strong> &mdash; so each " +
+          ing.portionUnit + " costs <strong>" + fmt4(perPortion) +
+          "</strong>. This recipe uses <strong>" + qtyPhrase +
+          "</strong>, for an extended cost of <strong>" + fmt2(ext) + "</strong>.";
+        $("explain-" + i).classList.remove("explain-pending");
+      } else {
+        $("explain-" + i).innerHTML =
+          "Enter the <strong>cost per " + puLower + "</strong> and the <strong>usable " +
+          ing.noun + " per " + puLower + "</strong> to calculate this ingredient's cost. " +
+          "The recipe uses <strong>" + qtyPhrase + "</strong> of " + ing.name.toLowerCase() + ".";
+        $("explain-" + i).classList.add("explain-pending");
+      }
+    });
+
+    const buildLabel = allComplete ? fmt2(buildCost) : "—";
+    $("footTotal").textContent = buildLabel;
+    $("cardBuild").textContent = buildLabel;
+
+    const price = parseFloat($("priceInput").value) || 0;
+
+    let pct = null, bandCls = "", bandLabel = "", margin = null;
+    if (allComplete && price > 0) {
+      margin = price - buildCost;
+      pct = (buildCost / price) * 100;
+      if (pct <= 32) { bandCls = "good"; bandLabel = "On target"; }
+      else if (pct <= 38) { bandCls = "watch"; bandLabel = "Watch"; }
+      else { bandCls = "over"; bandLabel = "Over target"; }
+    }
+
+    $("cardMargin").textContent = (margin == null) ? "—" : fmt2(margin);
+
+    const pctEl = $("cardPct");
+    const pill = $("pctPill");
+    if (pct !== null) {
+      pctEl.textContent = pct.toFixed(1) + "%";
+      pill.className = "pct-pill " + bandCls;
+      pill.textContent = bandLabel;
+    } else {
+      pctEl.textContent = "—";
+      pill.className = "pct-pill" + (allComplete ? "" : " incomplete");
+      pill.textContent = allComplete ? "" : "needs entries";
+    }
+
+    // ---- Incomplete-entries flag ----
+    const missingCount = computed.filter(c => !c.complete).length;
+    const total = computed.length;
+    const alert = $("incompleteAlert");
+    const cardBuildWrap = $("cardBuildWrap");
+    const cardPctWrap = $("cardPctWrap");
+    const cardBuildNote = $("cardBuildNote");
+
+    if (missingCount > 0) {
+      alert.classList.add("is-visible");
+      const ingWord = missingCount === 1 ? "ingredient" : "ingredients";
+      $("alertText").innerHTML =
+        "<strong>" + missingCount + " of " + total + " " + ingWord + "</strong> " +
+        (missingCount === 1 ? "is" : "are") + " still missing a purchase unit cost, a portions-per-unit value, or both. " +
+        "The <strong>Build Cost</strong>, <strong>Food Cost %</strong>, and <strong>Gross Margin</strong> shown below " +
+        "cannot be calculated accurately until every ingredient row is complete. " +
+        "Look for the rows marked &ldquo;awaiting entry.&rdquo;";
+      cardBuildWrap.classList.add("is-blocked");
+      cardPctWrap.classList.add("is-blocked");
+      cardBuildNote.textContent = "incomplete — fill all rows";
+      cardBuildNote.classList.add("note-blocked");
+    } else {
+      alert.classList.remove("is-visible");
+      cardBuildWrap.classList.remove("is-blocked");
+      cardPctWrap.classList.remove("is-blocked");
+      cardBuildNote.textContent = "sum of all ingredients";
+      cardBuildNote.classList.remove("note-blocked");
+    }
+
+    updateReport(computed, buildCost, price, margin, pct, bandCls, bandLabel, allComplete);
+  }
+
+  // ---- Populate the print-only report ----
+  function updateReport(computed, buildCost, price, margin, pct, bandCls, bandLabel, allComplete) {
+    $("rptItem").textContent = currentItem.name;
+    $("rptSku").textContent = currentItem.sku;
+
+    const loc = $("locName").value.trim();
+    const rptLoc = $("rptLoc");
+    if (loc) { rptLoc.textContent = loc; rptLoc.className = "meta-value"; }
+    else { rptLoc.textContent = "Not specified"; rptLoc.className = "meta-value muted"; }
+
+    const dVal = $("locDate").value;
+    const rptDate = $("rptDate");
+    if (dVal) {
+      const d = new Date(dVal + "T00:00:00");
+      rptDate.textContent = d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+      rptDate.className = "meta-value";
+    } else {
+      rptDate.textContent = "Not specified";
+      rptDate.className = "meta-value muted";
+    }
+
+    // table rows
+    const rowsHtml = computed.map(c =>
+      '<tr>' +
+        '<td class="l">' + c.ing.name + '</td>' +
+        '<td class="c">' + c.ing.portionUnit + '</td>' +
+        '<td class="c">' + c.ing.portionQty + '</td>' +
+        '<td>' + c.st.pUnit + '</td>' +
+        '<td class="mono">' + (c.complete ? fmt2(c.st.cost) : "—") + '</td>' +
+        '<td class="mono">' + (c.complete ? c.st.portions : "—") + '</td>' +
+        '<td class="mono">' + (c.complete ? fmt4(c.perPortion) : "—") + '</td>' +
+        '<td class="ext-col">' + (c.complete ? fmt2(c.ext) : "—") + '</td>' +
+      '</tr>'
+    ).join("");
+    $("rptRows").innerHTML = rowsHtml;
+    $("rptBuild").textContent = allComplete ? fmt2(buildCost) : "Incomplete";
+
+    // results panel
+    $("rptResBuild").textContent = allComplete ? fmt2(buildCost) : "—";
+    $("rptResPrice").textContent = fmt2(price);
+    $("rptResMargin").textContent = (margin == null) ? "—" : fmt2(margin);
+    const resPct = $("rptResPct");
+    const resBand = $("rptResBand");
+    if (pct !== null) {
+      resPct.textContent = pct.toFixed(1) + "%";
+      resBand.className = "res-band " + bandCls;
+      resBand.textContent = bandLabel;
+    } else {
+      resPct.textContent = "—";
+      resBand.className = "res-band";
+      resBand.textContent = allComplete ? "" : "Incomplete entry";
+    }
+
+    // incomplete notice
+    const notice = $("rptNotice");
+    if (allComplete) {
+      notice.style.display = "none";
+    } else {
+      notice.style.display = "block";
+      const missing = computed.filter(c => !c.complete).length;
+      notice.textContent = "\u26A0  This worksheet is incomplete \u2014 " + missing +
+        " of " + computed.length + " ingredient" + (computed.length === 1 ? "" : "s") +
+        " still need cost and yield entered. Totals will calculate once all rows are filled in.";
+    }
+
+    // breakdown sentences
+    const bdHtml = computed.map(c => {
+      const qtyPhrase = pluralUnit(c.ing.portionQty, c.ing.portionUnit, c.ing.noun);
+      if (c.complete) {
+        return '<div class="bd-line"><span class="bd-ing">' + c.ing.name + ':</span> ' +
+          'One ' + c.puLower + ' costs <strong>' + fmt2(c.st.cost) +
+          '</strong> and yields <strong>' + c.st.portions + ' ' + c.ing.noun +
+          '</strong>, so each ' + c.ing.portionUnit + ' costs <strong>' + fmt4(c.perPortion) +
+          '</strong>. The recipe uses <strong>' + qtyPhrase +
+          '</strong> &rarr; <strong>' + fmt2(c.ext) + '</strong>.</div>';
+      } else {
+        return '<div class="bd-line bd-line-pending"><span class="bd-ing">' + c.ing.name + ':</span> ' +
+          'Not yet entered. Recipe uses <strong>' + qtyPhrase + '</strong>; ' +
+          'awaiting cost per ' + c.puLower + ' and usable ' + c.ing.noun + ' per ' + c.puLower + '.</div>';
+      }
+    }).join("");
+    $("rptBreakdown").innerHTML = bdHtml;
+  }
+
+  // ---- Date stamps ----
+  const today = new Date();
+  $("stamp").textContent = today.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  $("rptGenDate").textContent = today.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  // default the date field to today
+  $("locDate").value = today.toISOString().slice(0, 10);
+
+  $("priceInput").addEventListener("input", recalc);
+  $("locName").addEventListener("input", recalc);
+  $("locDate").addEventListener("change", recalc);
+
+  initMenu();
+</script>
+
+
+</body></html>
